@@ -7,9 +7,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using System.Net;
 using WebApiRest.NetCore.Models;
 using WebApiRest.NetCore.Models.Dao;
 using WebApiRest.NetCore.Models.DaoImpl.SQLServer;
+using WebApiRest.NetCore.Models.Helpers;
 
 namespace WebApiRest.NetCore
 {
@@ -86,22 +89,14 @@ namespace WebApiRest.NetCore
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseStatusCodePages(async context => {
+            // Custom error message.
+            app.UseStatusCodePages(async context => {
+                context.HttpContext.Response.ContentType = "application/json";
 
-                    context.HttpContext.Response.ContentType = "application/json";
-
-                    await context.HttpContext.Response.WriteAsync(
-                        "Status code page, status code: " +
-                        context.HttpContext.Response.StatusCode
-                    );
-                });
-            }
+                await context.HttpContext.Response.WriteAsync(
+                    new StatusCode(context.HttpContext.Response.StatusCode).ToString()
+                );
+            });
 
             app.UseCors(l =>
             {
