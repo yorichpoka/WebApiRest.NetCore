@@ -10,21 +10,25 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
 {
     public class GroupMenuDaoImpl : IGroupMenuDao
     {
+        private readonly DataBaseMySQLContext _DataBaseMySQLContext;
+
+        public GroupMenuDaoImpl(DataBaseMySQLContext dataBaseMySQLContext)
+        {
+            this._DataBaseMySQLContext = dataBaseMySQLContext;
+        }
+
         public Task<GroupMenuDto> Create(GroupMenuDto obj)
         {
             return
                 Task.Factory.StartNew<GroupMenuDto>(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        var value = MapperSingleton.Instance.Map<GroupMenuDto, TblGroupMenu>(obj);
+                    var value = MapperSingleton.Instance.Map<GroupMenuDto, TblGroupMenu>(obj);
 
-                        db.GroupMenus.Add(value);
+                    this._DataBaseMySQLContext.GroupMenus.Add(value);
 
-                        db.SaveChanges();
+                    this._DataBaseMySQLContext.SaveChanges();
 
-                        return MapperSingleton.Instance.Map<TblGroupMenu, GroupMenuDto>(value);
-                    }
+                    return MapperSingleton.Instance.Map<TblGroupMenu, GroupMenuDto>(value);
                 });
         }
 
@@ -33,14 +37,11 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
             return
                 Task.Factory.StartNew(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        db.GroupMenus.Remove(
-                            db.GroupMenus.Find(id)
-                        );
+                    this._DataBaseMySQLContext.GroupMenus.Remove(
+                        this._DataBaseMySQLContext.GroupMenus.Find(id)
+                    );
 
-                        db.SaveChanges();
-                    }
+                    this._DataBaseMySQLContext.SaveChanges();
                 });
         }
 
@@ -49,12 +50,9 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
             return
                 Task.Factory.StartNew<GroupMenuDto>(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        var value = db.GroupMenus.FindAsync(id);
+                    var value = this._DataBaseMySQLContext.GroupMenus.FindAsync(id);
 
-                        return MapperSingleton.Instance.Map<TblGroupMenu, GroupMenuDto>(value.Result);
-                    }
+                    return MapperSingleton.Instance.Map<TblGroupMenu, GroupMenuDto>(value.Result);
                 });
         }
 
@@ -63,12 +61,9 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
             return
                 Task.Factory.StartNew<IEnumerable<GroupMenuDto>>(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        var value = db.GroupMenus.ToList();
+                    var value = this._DataBaseMySQLContext.GroupMenus.ToList();
 
-                        return MapperSingleton.Instance.Map<IEnumerable<TblGroupMenu>, IEnumerable<GroupMenuDto>>(value);
-                    }
+                    return MapperSingleton.Instance.Map<IEnumerable<TblGroupMenu>, IEnumerable<GroupMenuDto>>(value);
                 });
         }
 
@@ -77,16 +72,13 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
             return
                 Task.Factory.StartNew(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        var value = db.GroupMenus.Find(obj.Id);
+                    var value = this._DataBaseMySQLContext.GroupMenus.Find(obj.Id);
 
-                        value.ExtUpdate(obj);
+                    value.ExtUpdate(obj);
 
-                        db.GroupMenus.Update(value);
+                    this._DataBaseMySQLContext.GroupMenus.Update(value);
 
-                        db.SaveChanges();
-                    }
+                    this._DataBaseMySQLContext.SaveChanges();
                 });
         }
     }

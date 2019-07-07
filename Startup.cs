@@ -55,12 +55,12 @@ namespace WebApiRest.NetCore
 
             // Set context
             services
-              .AddDbContext<Models.Entity.SQLServer.TestDBEntities>(options => {
+              .AddDbContext<Models.Entity.SQLServer.DataBaseSQLServerContext>(options => {
                   options.UseSqlServer(
-                        Configuration.GetConnectionString("ConnectionToDbSQLServerLocal")
+                        Configuration.GetConnectionString("DataBaseSQLServerContextConnectionString")
                     );
               })
-              .AddDbContext<Models.Entity.MySQL.TestDBMySQLEntities>(options => {
+              .AddDbContext<Models.Entity.MySQL.DataBaseMySQLContext>(options => {
                   options.UseMySQL(
                         Configuration.GetConnectionString("TestDBMySqlEntities")
                     );

@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApiRest.NetCore.Models.Entity.MySQL
 {
-    [Table("menu")]
     public partial class TblMenu
     {
         public TblMenu()

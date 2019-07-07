@@ -11,21 +11,25 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
 {
     public class AuthorizationDaoImpl : IAuthorizationDao
     {
+        private readonly DataBaseMySQLContext _DataBaseMySQLContext;
+
+        public AuthorizationDaoImpl(DataBaseMySQLContext _dataBaseMySQLContext)
+        {
+            this._DataBaseMySQLContext = _dataBaseMySQLContext;
+        }
+
         public Task<AuthorizationDto> Create(AuthorizationDto obj)
         {
             return
                 Task.Factory.StartNew<AuthorizationDto>(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        var value = MapperSingleton.Instance.Map<AuthorizationDto, TblAuthorization>(obj);
+                    var value = MapperSingleton.Instance.Map<AuthorizationDto, TblAuthorization>(obj);
 
-                        db.Authorizations.Add(value);
+                    this._DataBaseMySQLContext.Authorizations.Add(value);
 
-                        db.SaveChanges();
+                    this._DataBaseMySQLContext.SaveChanges();
 
-                        return MapperSingleton.Instance.Map<TblAuthorization, AuthorizationDto>(value);
-                    }
+                    return MapperSingleton.Instance.Map<TblAuthorization, AuthorizationDto>(value);
                 });
         }
 
@@ -34,14 +38,11 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
             return
                 Task.Factory.StartNew(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        db.Authorizations.Remove(
-                            db.Authorizations.FirstOrDefault(l => l.IdRole == idRole && l.IdMenu == idMenu)
-                        );
+                    this._DataBaseMySQLContext.Authorizations.Remove(
+                        this._DataBaseMySQLContext.Authorizations.FirstOrDefault(l => l.IdRole == idRole && l.IdMenu == idMenu)
+                    );
 
-                        db.SaveChanges();
-                    }
+                    this._DataBaseMySQLContext.SaveChanges();
                 });
         }
 
@@ -50,12 +51,9 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
             return
                 Task.Factory.StartNew<AuthorizationDto>(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        var value = db.Authorizations.FirstOrDefaultAsync(l => l.IdRole == idRole && l.IdMenu == idMenu);
+                    var value = this._DataBaseMySQLContext.Authorizations.FirstOrDefaultAsync(l => l.IdRole == idRole && l.IdMenu == idMenu);
 
-                        return MapperSingleton.Instance.Map<TblAuthorization, AuthorizationDto>(value.Result);
-                    }
+                    return MapperSingleton.Instance.Map<TblAuthorization, AuthorizationDto>(value.Result);
                 });
         }
 
@@ -64,12 +62,9 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
             return
                 Task.Factory.StartNew<IEnumerable<AuthorizationDto>>(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        var value = db.Authorizations.ToList();
+                    var value = this._DataBaseMySQLContext.Authorizations.ToList();
 
-                        return MapperSingleton.Instance.Map<IEnumerable<TblAuthorization>, IEnumerable<AuthorizationDto>>(value);
-                    }
+                    return MapperSingleton.Instance.Map<IEnumerable<TblAuthorization>, IEnumerable<AuthorizationDto>>(value);
                 });
         }
 
@@ -78,16 +73,13 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
             return
                 Task.Factory.StartNew(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        var value = db.Authorizations.FirstOrDefaultAsync(l => l.IdRole == obj.IdRole && l.IdMenu == obj.IdMenu);
+                    var value = this._DataBaseMySQLContext.Authorizations.FirstOrDefaultAsync(l => l.IdRole == obj.IdRole && l.IdMenu == obj.IdMenu);
 
-                        //value.Result.ExtUpdate(obj);
+                    //value.Result.ExtUpdate(obj);
 
-                        db.Authorizations.Update(value.Result);
+                    this._DataBaseMySQLContext.Authorizations.Update(value.Result);
 
-                        db.SaveChanges();
-                    }
+                    this._DataBaseMySQLContext.SaveChanges();
                 });
         }
     }

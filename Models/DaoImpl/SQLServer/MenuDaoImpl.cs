@@ -11,21 +11,25 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
 {
     public class MenuDaoImpl : IMenuDao
     {
+        private readonly DataBaseSQLServerContext _DataBaseSQLServerContext;
+
+        public MenuDaoImpl(DataBaseSQLServerContext dataBaseSQLServerContext)
+        {
+            this._DataBaseSQLServerContext = dataBaseSQLServerContext;
+        }
+
         public Task<MenuDto> Create(MenuDto obj)
         {
             return
                 Task.Factory.StartNew<MenuDto>(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        var value = MapperSingleton.Instance.Map<MenuDto, Menu>(obj);
+                    var value = MapperSingleton.Instance.Map<MenuDto, Menu>(obj);
 
-                        db.Menus.Add(value);
+                    this._DataBaseSQLServerContext.Menus.Add(value);
 
-                        db.SaveChanges();
+                    this._DataBaseSQLServerContext.SaveChanges();
 
-                        return MapperSingleton.Instance.Map<Menu, MenuDto>(value);
-                    }
+                    return MapperSingleton.Instance.Map<Menu, MenuDto>(value);
                 });
         }
 
@@ -34,14 +38,11 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
             return
                 Task.Factory.StartNew(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        db.Menus.Remove(
-                            db.Menus.Find(id)
-                        );
+                    this._DataBaseSQLServerContext.Menus.Remove(
+                        this._DataBaseSQLServerContext.Menus.Find(id)
+                    );
 
-                        db.SaveChanges();
-                    }
+                    this._DataBaseSQLServerContext.SaveChanges();
                 });
         }
 
@@ -50,12 +51,9 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
             return
                 Task.Factory.StartNew<MenuDto>(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        var value = db.Menus.FindAsync(id);
+                    var value = this._DataBaseSQLServerContext.Menus.FindAsync(id);
 
-                        return MapperSingleton.Instance.Map<Menu, MenuDto>(value.Result);
-                    }
+                    return MapperSingleton.Instance.Map<Menu, MenuDto>(value.Result);
                 });
         }
 
@@ -64,12 +62,9 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
             return
                 Task.Factory.StartNew<IEnumerable<MenuDto>>(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        var value = db.Menus.ToList();
+                    var value = this._DataBaseSQLServerContext.Menus.ToList();
 
-                        return MapperSingleton.Instance.Map<IEnumerable<Menu>, IEnumerable<MenuDto>>(value);
-                    }
+                    return MapperSingleton.Instance.Map<IEnumerable<Menu>, IEnumerable<MenuDto>>(value);
                 });
         }
 
@@ -78,16 +73,13 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
             return
                 Task.Factory.StartNew(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        var value = db.Menus.Find(obj.Id);
+                    var value = this._DataBaseSQLServerContext.Menus.Find(obj.Id);
 
-                        value.ExtUpdate(obj);
+                    value.ExtUpdate(obj);
 
-                        db.Menus.Update(value);
+                    this._DataBaseSQLServerContext.Menus.Update(value);
 
-                        db.SaveChanges();
-                    }
+                    this._DataBaseSQLServerContext.SaveChanges();
                 });
         }
     }

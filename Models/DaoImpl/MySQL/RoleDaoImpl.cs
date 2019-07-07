@@ -10,21 +10,25 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
 {
     public class RoleDaoImpl : IRoleDao
     {
+        private readonly DataBaseMySQLContext _DataBaseMySQLContext;
+
+        public RoleDaoImpl(DataBaseMySQLContext dataBaseMySQLContext)
+        {
+            this._DataBaseMySQLContext = dataBaseMySQLContext;
+        }
+
         public Task<RoleDto> Create(RoleDto obj)
         {
             return
                 Task.Factory.StartNew<RoleDto>(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        var value = MapperSingleton.Instance.Map<RoleDto, TblRole>(obj);
+                    var value = MapperSingleton.Instance.Map<RoleDto, TblRole>(obj);
 
-                        db.Roles.Add(value);
+                    this._DataBaseMySQLContext.Roles.Add(value);
 
-                        db.SaveChanges();
+                    this._DataBaseMySQLContext.SaveChanges();
 
-                        return MapperSingleton.Instance.Map<TblRole, RoleDto>(value);
-                    }
+                    return MapperSingleton.Instance.Map<TblRole, RoleDto>(value);
                 });
         }
 
@@ -33,14 +37,11 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
             return
                 Task.Factory.StartNew(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        db.Roles.Remove(
-                            db.Roles.Find(id)
-                        );
+                    this._DataBaseMySQLContext.Roles.Remove(
+                        this._DataBaseMySQLContext.Roles.Find(id)
+                    );
 
-                        db.SaveChanges();
-                    }
+                    this._DataBaseMySQLContext.SaveChanges();
                 });
         }
 
@@ -49,12 +50,9 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
             return
                 Task.Factory.StartNew<RoleDto>(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        var value = db.Roles.FindAsync(id);
+                    var value = this._DataBaseMySQLContext.Roles.FindAsync(id);
 
-                        return MapperSingleton.Instance.Map<TblRole, RoleDto>(value.Result);
-                    }
+                    return MapperSingleton.Instance.Map<TblRole, RoleDto>(value.Result);
                 });
         }
 
@@ -63,12 +61,9 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
             return
                 Task.Factory.StartNew<IEnumerable<RoleDto>>(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        var value = db.Roles.ToList();
+                    var value = this._DataBaseMySQLContext.Roles.ToList();
 
-                        return MapperSingleton.Instance.Map<IEnumerable<TblRole>, IEnumerable<RoleDto>>(value);
-                    }
+                    return MapperSingleton.Instance.Map<IEnumerable<TblRole>, IEnumerable<RoleDto>>(value);
                 });
         }
 
@@ -77,16 +72,13 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
             return
                 Task.Factory.StartNew(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        var value = db.Roles.Find(obj.Id);
+                    var value = this._DataBaseMySQLContext.Roles.Find(obj.Id);
 
-                        value.ExtUpdate(obj);
+                    value.ExtUpdate(obj);
 
-                        db.Roles.Update(value);
+                    this._DataBaseMySQLContext.Roles.Update(value);
 
-                        db.SaveChanges();
-                    }
+                    this._DataBaseMySQLContext.SaveChanges();
                 });
         }
     }

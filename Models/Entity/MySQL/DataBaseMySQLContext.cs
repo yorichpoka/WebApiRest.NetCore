@@ -4,7 +4,7 @@ using WebApiRest.NetCore.Models.Entity;
 
 namespace WebApiRest.NetCore.Models.Entity.MySQL
 {
-    public class TestDBMySQLEntities : DbContext
+    public class DataBaseMySQLContext : DbContext
     {
         public virtual DbSet<TblAuthorization> Authorizations { get; set; }
         public virtual DbSet<TblGroupMenu> GroupMenus { get; set; }
@@ -12,19 +12,9 @@ namespace WebApiRest.NetCore.Models.Entity.MySQL
         public virtual DbSet<TblRole> Roles { get; set; }
         public virtual DbSet<TblUser> Users { get; set; }
 
-        public TestDBMySQLEntities() { }
+        public DataBaseMySQLContext() { }
 
-        public TestDBMySQLEntities(DbContextOptions<TestDBMySQLEntities> options)
-            : base(options)
-        { }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            //optionsBuilder
-            //    .UseMySQL(
-            //        ConfigurationManager.ConnectionStrings["TestDBMySqlEntities"].ConnectionString
-            //    );
-        }
+        public DataBaseMySQLContext(DbContextOptions<DataBaseMySQLContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,7 +24,7 @@ namespace WebApiRest.NetCore.Models.Entity.MySQL
             {
                 entity.HasKey(e => new { e.IdMenu, e.IdRole });
 
-                entity.ToTable("_Authorization");
+                entity.ToTable("_authorization");
 
                 entity.Property(e => e.CreationDate).HasColumnType("DATETIME");
 
@@ -53,6 +43,10 @@ namespace WebApiRest.NetCore.Models.Entity.MySQL
 
             modelBuilder.Entity<TblGroupMenu>(entity =>
             {
+                entity.HasKey(e => new { e.Id });
+
+                entity.ToTable("groupmenu");
+
                 entity.Property(e => e.Title)
                     .IsRequired()
                     .HasMaxLength(150);
@@ -60,6 +54,10 @@ namespace WebApiRest.NetCore.Models.Entity.MySQL
 
             modelBuilder.Entity<TblMenu>(entity =>
             {
+                entity.HasKey(e => new { e.Id });
+
+                entity.ToTable("menu");
+
                 entity.Property(e => e.Title)
                     .IsRequired()
                     .HasMaxLength(150);
@@ -73,6 +71,10 @@ namespace WebApiRest.NetCore.Models.Entity.MySQL
 
             modelBuilder.Entity<TblRole>(entity =>
             {
+                entity.HasKey(e => new { e.Id });
+
+                entity.ToTable("Role");
+
                 entity.Property(e => e.Title)
                     .IsRequired()
                     .HasMaxLength(150);
@@ -80,6 +82,10 @@ namespace WebApiRest.NetCore.Models.Entity.MySQL
 
             modelBuilder.Entity<TblUser>(entity =>
             {
+                entity.HasKey(e => new { e.Id });
+
+                entity.ToTable("user");
+
                 entity.HasIndex(e => e.Login)
                     .HasName("IX_User")
                     .IsUnique();

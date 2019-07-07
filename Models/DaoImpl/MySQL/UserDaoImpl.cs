@@ -11,21 +11,25 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
 {
     public class UserDaoImpl : IUserDao
     {
+        private readonly DataBaseMySQLContext _DataBaseMySQLContext;
+
+        public UserDaoImpl(DataBaseMySQLContext dataBaseMySQLContext)
+        {
+            this._DataBaseMySQLContext = dataBaseMySQLContext;
+        }
+
         public Task<UserDto> Create(UserDto obj)
         {
             return
                 Task.Factory.StartNew<UserDto>(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        var value = MapperSingleton.Instance.Map<UserDto, TblUser>(obj);
+                    var value = MapperSingleton.Instance.Map<UserDto, TblUser>(obj);
 
-                        db.Users.Add(value);
+                    this._DataBaseMySQLContext.Users.Add(value);
 
-                        db.SaveChanges();
+                    this._DataBaseMySQLContext.SaveChanges();
 
-                        return MapperSingleton.Instance.Map<TblUser, UserDto>(value);
-                    }
+                    return MapperSingleton.Instance.Map<TblUser, UserDto>(value);
                 });
         }
 
@@ -34,14 +38,11 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
             return
                 Task.Factory.StartNew(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        db.Users.Remove(
-                            db.Users.Find(id)
-                        );
+                    this._DataBaseMySQLContext.Users.Remove(
+                        this._DataBaseMySQLContext.Users.Find(id)
+                    );
 
-                        db.SaveChanges();
-                    }
+                    this._DataBaseMySQLContext.SaveChanges();
                 });
         }
 
@@ -50,12 +51,9 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
             return
                 Task.Factory.StartNew<UserDto>(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        var value = db.Users.FindAsync(id);
+                    var value = this._DataBaseMySQLContext.Users.FindAsync(id);
 
-                        return MapperSingleton.Instance.Map<TblUser, UserDto>(value.Result);
-                    }
+                    return MapperSingleton.Instance.Map<TblUser, UserDto>(value.Result);
                 });
         }
 
@@ -64,12 +62,9 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
             return
                 Task.Factory.StartNew<UserDto>(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        var value = db.Users.FirstOrDefaultAsync(l => l.Login == login && l.Password == password);
+                    var value = this._DataBaseMySQLContext.Users.FirstOrDefaultAsync(l => l.Login == login && l.Password == password);
 
-                        return MapperSingleton.Instance.Map<TblUser, UserDto>(value.Result);
-                    }
+                    return MapperSingleton.Instance.Map<TblUser, UserDto>(value.Result);
                 });
         }
 
@@ -78,12 +73,9 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
             return
                 Task.Factory.StartNew<IEnumerable<UserDto>>(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        var value = db.Users.ToList();
+                    var value = this._DataBaseMySQLContext.Users.ToList();
 
-                        return MapperSingleton.Instance.Map<IEnumerable<TblUser>, IEnumerable<UserDto>>(value);
-                    }
+                    return MapperSingleton.Instance.Map<IEnumerable<TblUser>, IEnumerable<UserDto>>(value);
                 });
         }
 
@@ -92,16 +84,13 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
             return
                 Task.Factory.StartNew(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        var value = db.Users.Find(obj.Id);
+                    var value = this._DataBaseMySQLContext.Users.Find(obj.Id);
 
-                        value.ExtUpdate(obj);
+                    value.ExtUpdate(obj);
 
-                        db.Users.Update(value);
+                    this._DataBaseMySQLContext.Users.Update(value);
 
-                        db.SaveChanges();
-                    }
+                    this._DataBaseMySQLContext.SaveChanges();
                 });
         }
     }

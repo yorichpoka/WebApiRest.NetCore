@@ -11,21 +11,25 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
 {
     public class GroupMenuDaoImpl : IGroupMenuDao
     {
+        private readonly DataBaseSQLServerContext _DataBaseSQLServerContext;
+
+        public GroupMenuDaoImpl(DataBaseSQLServerContext dataBaseSQLServerContext)
+        {
+            this._DataBaseSQLServerContext = dataBaseSQLServerContext;
+        }
+
         public Task<GroupMenuDto> Create(GroupMenuDto obj)
         {
             return
                 Task.Factory.StartNew<GroupMenuDto>(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        var value = MapperSingleton.Instance.Map<GroupMenuDto, GroupMenu>(obj);
+                    var value = MapperSingleton.Instance.Map<GroupMenuDto, GroupMenu>(obj);
 
-                        db.GroupMenus.Add(value);
+                    this._DataBaseSQLServerContext.GroupMenus.Add(value);
 
-                        db.SaveChanges();
+                    this._DataBaseSQLServerContext.SaveChanges();
 
-                        return MapperSingleton.Instance.Map<GroupMenu, GroupMenuDto>(value);
-                    }
+                    return MapperSingleton.Instance.Map<GroupMenu, GroupMenuDto>(value);
                 });
         }
 
@@ -34,14 +38,11 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
             return
                 Task.Factory.StartNew(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        db.GroupMenus.Remove(
-                            db.GroupMenus.Find(id)
-                        );
+                    this._DataBaseSQLServerContext.GroupMenus.Remove(
+                        this._DataBaseSQLServerContext.GroupMenus.Find(id)
+                    );
 
-                        db.SaveChanges();
-                    }
+                    this._DataBaseSQLServerContext.SaveChanges();
                 });
         }
 
@@ -50,12 +51,9 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
             return
                 Task.Factory.StartNew<GroupMenuDto>(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        var value = db.GroupMenus.FindAsync(id);
+                    var value = this._DataBaseSQLServerContext.GroupMenus.FindAsync(id);
 
-                        return MapperSingleton.Instance.Map<GroupMenu, GroupMenuDto>(value.Result);
-                    }
+                    return MapperSingleton.Instance.Map<GroupMenu, GroupMenuDto>(value.Result);
                 });
         }
 
@@ -64,12 +62,9 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
             return
                 Task.Factory.StartNew<IEnumerable<GroupMenuDto>>(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        var value = db.GroupMenus.ToList();
+                    var value = this._DataBaseSQLServerContext.GroupMenus.ToList();
 
-                        return MapperSingleton.Instance.Map<IEnumerable<GroupMenu>, IEnumerable<GroupMenuDto>>(value);
-                    }
+                    return MapperSingleton.Instance.Map<IEnumerable<GroupMenu>, IEnumerable<GroupMenuDto>>(value);
                 });
         }
 
@@ -78,16 +73,13 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
             return
                 Task.Factory.StartNew(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        var value = db.GroupMenus.Find(obj.Id);
+                    var value = this._DataBaseSQLServerContext.GroupMenus.Find(obj.Id);
 
-                        value.ExtUpdate(obj);
+                    value.ExtUpdate(obj);
 
-                        db.GroupMenus.Update(value);
+                    this._DataBaseSQLServerContext.GroupMenus.Update(value);
 
-                        db.SaveChanges();
-                    }
+                    this._DataBaseSQLServerContext.SaveChanges();
                 });
         }
     }

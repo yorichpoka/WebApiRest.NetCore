@@ -2,7 +2,7 @@
 
 namespace WebApiRest.NetCore.Models.Entity.SQLServer
 {
-    public partial class TestDBEntities : DbContext
+    public partial class DataBaseSQLServerContext : DbContext
     {
         public virtual DbSet<Authorization> Authorizations { get; set; }
         public virtual DbSet<GroupMenu> GroupMenus { get; set; }
@@ -10,22 +10,9 @@ namespace WebApiRest.NetCore.Models.Entity.SQLServer
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<User> Users { get; set; }
 
-        public TestDBEntities() { }
+        public DataBaseSQLServerContext() { }
 
-        public TestDBEntities(DbContextOptions<TestDBEntities> options)
-            : base(options)
-        { }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            //if (!optionsBuilder.IsConfigured)
-            //{
-            //    optionsBuilder
-            //        .UseSqlServer(
-            //            "Server=(local);Database=TestDB;User ID=sa;Password=Yorich@Poka1478;Trusted_Connection=True;"
-            //        );
-            //}
-        }
+        public DataBaseSQLServerContext(DbContextOptions<DataBaseSQLServerContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -54,6 +41,10 @@ namespace WebApiRest.NetCore.Models.Entity.SQLServer
 
             modelBuilder.Entity<GroupMenu>(entity =>
             {
+                entity.HasKey(e => new { e.Id });
+
+                entity.ToTable("GroupMenu");
+
                 entity.Property(e => e.Title)
                     .IsRequired()
                     .HasMaxLength(50);
@@ -61,6 +52,10 @@ namespace WebApiRest.NetCore.Models.Entity.SQLServer
 
             modelBuilder.Entity<Menu>(entity =>
             {
+                entity.HasKey(e => new { e.Id });
+
+                entity.ToTable("Menu");
+
                 entity.Property(e => e.Title)
                     .IsRequired()
                     .HasMaxLength(50);
@@ -74,6 +69,10 @@ namespace WebApiRest.NetCore.Models.Entity.SQLServer
 
             modelBuilder.Entity<Role>(entity =>
             {
+                entity.HasKey(e => new { e.Id });
+
+                entity.ToTable("Role");
+
                 entity.Property(e => e.Title)
                     .IsRequired()
                     .HasMaxLength(50);
@@ -81,6 +80,10 @@ namespace WebApiRest.NetCore.Models.Entity.SQLServer
 
             modelBuilder.Entity<User>(entity =>
             {
+                entity.HasKey(e => new { e.Id });
+
+                entity.ToTable("User");
+
                 entity.Property(e => e.Login)
                     .IsRequired()
                     .HasMaxLength(50);

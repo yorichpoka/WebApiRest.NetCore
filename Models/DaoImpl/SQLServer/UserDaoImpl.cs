@@ -12,21 +12,25 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
 {
     public class UserDaoImpl : IUserDao
     {
+        private readonly DataBaseSQLServerContext _DataBaseSQLServerContext;
+
+        public UserDaoImpl(DataBaseSQLServerContext dataBaseSQLServerContext)
+        {
+            this._DataBaseSQLServerContext = dataBaseSQLServerContext;
+        }
+
         public Task<UserDto> Create(UserDto obj)
         {
             return
                 Task.Factory.StartNew<UserDto>(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        var value = MapperSingleton.Instance.Map<UserDto, User>(obj);
+                    var value = MapperSingleton.Instance.Map<UserDto, User>(obj);
 
-                        db.Users.Add(value);
+                    this._DataBaseSQLServerContext.Users.Add(value);
 
-                        db.SaveChanges();
+                    this._DataBaseSQLServerContext.SaveChanges();
 
-                        return MapperSingleton.Instance.Map<User, UserDto>(value);
-                    }
+                    return MapperSingleton.Instance.Map<User, UserDto>(value);
                 });
         }
 
@@ -35,14 +39,11 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
             return
                 Task.Factory.StartNew(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        db.Users.Remove(
-                            db.Users.Find(id)
-                        );
+                    this._DataBaseSQLServerContext.Users.Remove(
+                        this._DataBaseSQLServerContext.Users.Find(id)
+                    );
 
-                        db.SaveChanges();
-                    }
+                    this._DataBaseSQLServerContext.SaveChanges();
                 });
         }
 
@@ -51,12 +52,9 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
             return
                 Task.Factory.StartNew<UserDto>(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        var value = db.Users.FindAsync(id);
+                    var value = this._DataBaseSQLServerContext.Users.FindAsync(id);
 
-                        return MapperSingleton.Instance.Map<User, UserDto>(value.Result);
-                    }
+                    return MapperSingleton.Instance.Map<User, UserDto>(value.Result);
                 });
         }
 
@@ -65,12 +63,9 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
             return
                 Task.Factory.StartNew<UserDto>(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        var value = db.Users.FirstOrDefaultAsync(l => l.Login == login && l.Password == password);
+                    var value = this._DataBaseSQLServerContext.Users.FirstOrDefaultAsync(l => l.Login == login && l.Password == password);
 
-                        return MapperSingleton.Instance.Map<User, UserDto>(value.Result);
-                    }
+                    return MapperSingleton.Instance.Map<User, UserDto>(value.Result);
                 });
         }
 
@@ -79,12 +74,9 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
             return
                 Task.Factory.StartNew<IEnumerable<UserDto>>(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        var value = db.Users.ToList();
+                    var value = this._DataBaseSQLServerContext.Users.ToList();
 
-                        return MapperSingleton.Instance.Map<IEnumerable<User>, IEnumerable<UserDto>>(value);
-                    }
+                    return MapperSingleton.Instance.Map<IEnumerable<User>, IEnumerable<UserDto>>(value);
                 });
         }
 
@@ -93,16 +85,13 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
             return
                 Task.Factory.StartNew(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        var value = db.Users.Find(obj.Id);
+                    var value = this._DataBaseSQLServerContext.Users.Find(obj.Id);
 
-                        value.ExtUpdate(obj);
+                    value.ExtUpdate(obj);
 
-                        db.Users.Update(value);
+                    this._DataBaseSQLServerContext.Users.Update(value);
 
-                        db.SaveChanges();
-                    }
+                    this._DataBaseSQLServerContext.SaveChanges();
                 });
         }
     }

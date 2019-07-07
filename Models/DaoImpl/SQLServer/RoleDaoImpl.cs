@@ -11,21 +11,25 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
 {
     public class RoleDaoImpl : IRoleDao
     {
+        private readonly DataBaseSQLServerContext _DataBaseSQLServerContext;
+
+        public RoleDaoImpl(DataBaseSQLServerContext dataBaseSQLServerContext)
+        {
+            this._DataBaseSQLServerContext = dataBaseSQLServerContext;
+        }
+
         public Task<RoleDto> Create(RoleDto obj)
         {
             return
                 Task.Factory.StartNew<RoleDto>(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        var value = MapperSingleton.Instance.Map<RoleDto, Role>(obj);
+                    var value = MapperSingleton.Instance.Map<RoleDto, Role>(obj);
 
-                        db.Roles.Add(value);
+                    this._DataBaseSQLServerContext.Roles.Add(value);
 
-                        db.SaveChanges();
+                    this._DataBaseSQLServerContext.SaveChanges();
 
-                        return MapperSingleton.Instance.Map<Role, RoleDto>(value);
-                    }
+                    return MapperSingleton.Instance.Map<Role, RoleDto>(value);
                 });
         }
 
@@ -34,14 +38,11 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
             return
                 Task.Factory.StartNew(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        db.Roles.Remove(
-                            db.Roles.Find(id)
-                        );
+                    this._DataBaseSQLServerContext.Roles.Remove(
+                        this._DataBaseSQLServerContext.Roles.Find(id)
+                    );
 
-                        db.SaveChanges();
-                    }
+                    this._DataBaseSQLServerContext.SaveChanges();
                 });
         }
 
@@ -50,12 +51,9 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
             return
                 Task.Factory.StartNew<RoleDto>(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        var value = db.Roles.FindAsync(id);
+                    var value = this._DataBaseSQLServerContext.Roles.FindAsync(id);
 
-                        return MapperSingleton.Instance.Map<Role, RoleDto>(value.Result);
-                    }
+                    return MapperSingleton.Instance.Map<Role, RoleDto>(value.Result);
                 });
         }
 
@@ -64,12 +62,9 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
             return
                 Task.Factory.StartNew<IEnumerable<RoleDto>>(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        var value = db.Roles.ToList();
+                    var value = this._DataBaseSQLServerContext.Roles.ToList();
 
-                        return MapperSingleton.Instance.Map<IEnumerable<Role>, IEnumerable<RoleDto>>(value);
-                    }
+                    return MapperSingleton.Instance.Map<IEnumerable<Role>, IEnumerable<RoleDto>>(value);
                 });
         }
 
@@ -78,16 +73,13 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
             return
                 Task.Factory.StartNew(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        var value = db.Roles.Find(obj.Id);
+                    var value = this._DataBaseSQLServerContext.Roles.Find(obj.Id);
 
-                        value.ExtUpdate(obj);
+                    value.ExtUpdate(obj);
 
-                        db.Roles.Update(value);
+                    this._DataBaseSQLServerContext.Roles.Update(value);
 
-                        db.SaveChanges();
-                    }
+                    this._DataBaseSQLServerContext.SaveChanges();
                 });
         }
     }

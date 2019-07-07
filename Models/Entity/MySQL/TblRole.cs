@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApiRest.NetCore.Models.Entity.MySQL
 {
-    [Table("role")]
     public class TblRole
     {
         public TblRole()

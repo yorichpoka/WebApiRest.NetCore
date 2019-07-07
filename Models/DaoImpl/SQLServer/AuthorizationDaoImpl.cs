@@ -12,21 +12,25 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
 {
     public class AuthorizationDaoImpl : IAuthorizationDao
     {
+        private readonly DataBaseSQLServerContext _DataBaseSQLServerContext;
+
+        public AuthorizationDaoImpl(DataBaseSQLServerContext dataBaseSQLServerContext)
+        {
+            this._DataBaseSQLServerContext = dataBaseSQLServerContext;
+        }
+
         public Task<AuthorizationDto> Create(AuthorizationDto obj)
         {
             return
                 Task.Factory.StartNew<AuthorizationDto>(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        var value = MapperSingleton.Instance.Map<AuthorizationDto, Authorization>(obj);
+                    var value = MapperSingleton.Instance.Map<AuthorizationDto, Authorization>(obj);
 
-                        db.Authorizations.Add(value);
+                    this._DataBaseSQLServerContext.Authorizations.Add(value);
 
-                        db.SaveChanges();
+                    this._DataBaseSQLServerContext.SaveChanges();
 
-                        return MapperSingleton.Instance.Map<Authorization, AuthorizationDto>(value);
-                    }
+                    return MapperSingleton.Instance.Map<Authorization, AuthorizationDto>(value);
                 });
         }
 
@@ -35,14 +39,11 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
             return
                 Task.Factory.StartNew(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        db.Authorizations.Remove(
-                            db.Authorizations.FirstOrDefault(l => l.IdRole == idRole && l.IdMenu == idMenu)
-                        );
+                    this._DataBaseSQLServerContext.Authorizations.Remove(
+                        this._DataBaseSQLServerContext.Authorizations.FirstOrDefault(l => l.IdRole == idRole && l.IdMenu == idMenu)
+                    );
 
-                        db.SaveChanges();
-                    }
+                    this._DataBaseSQLServerContext.SaveChanges();
                 });
         }
 
@@ -51,12 +52,9 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
             return
                 Task.Factory.StartNew<AuthorizationDto>(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        var value = db.Authorizations.FirstOrDefaultAsync(l => l.IdRole == idRole && l.IdMenu == idMenu);
+                    var value = this._DataBaseSQLServerContext.Authorizations.FirstOrDefaultAsync(l => l.IdRole == idRole && l.IdMenu == idMenu);
 
-                        return MapperSingleton.Instance.Map<Authorization, AuthorizationDto>(value.Result);
-                    }
+                    return MapperSingleton.Instance.Map<Authorization, AuthorizationDto>(value.Result);
                 });
         }
 
@@ -65,12 +63,9 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
             return
                 Task.Factory.StartNew<IEnumerable<AuthorizationDto>>(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        var value = db.Authorizations.ToList();
+                    var value = this._DataBaseSQLServerContext.Authorizations.ToList();
 
-                        return MapperSingleton.Instance.Map<IEnumerable<Authorization>, IEnumerable<AuthorizationDto>>(value);
-                    }
+                    return MapperSingleton.Instance.Map<IEnumerable<Authorization>, IEnumerable<AuthorizationDto>>(value);
                 });
         }
 
@@ -79,16 +74,13 @@ namespace WebApiRest.NetCore.Models.DaoImpl.SQLServer
             return
                 Task.Factory.StartNew(() =>
                 {
-                    using (var db = new TestDBEntities())
-                    {
-                        var value = db.Authorizations.FirstOrDefaultAsync(l => l.IdRole == obj.IdRole && l.IdMenu == obj.IdMenu);
+                    var value = this._DataBaseSQLServerContext.Authorizations.FirstOrDefaultAsync(l => l.IdRole == obj.IdRole && l.IdMenu == obj.IdMenu);
 
-                        //value.Result.ExtUpdate(obj);
+                    //value.Result.ExtUpdate(obj);
 
-                        db.Authorizations.Update(value.Result);
+                    this._DataBaseSQLServerContext.Authorizations.Update(value.Result);
 
-                        db.SaveChanges();
-                    }
+                    this._DataBaseSQLServerContext.SaveChanges();
                 });
         }
     }

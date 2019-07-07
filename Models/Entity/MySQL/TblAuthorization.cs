@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApiRest.NetCore.Models.Entity.MySQL
 {
-    [Table("_authorization")]
     public class TblAuthorization
     {
         public int IdRole { get; set; }

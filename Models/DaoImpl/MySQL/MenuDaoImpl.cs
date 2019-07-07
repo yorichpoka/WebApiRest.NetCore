@@ -10,21 +10,25 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
 {
     public class MenuDaoImpl : IMenuDao
     {
+        private readonly DataBaseMySQLContext _DataBaseMySQLContext;
+
+        public MenuDaoImpl(DataBaseMySQLContext dataBaseMySQLContext)
+        {
+            this._DataBaseMySQLContext = dataBaseMySQLContext;
+        }
+
         public Task<MenuDto> Create(MenuDto obj)
         {
             return
                 Task.Factory.StartNew<MenuDto>(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        var value = MapperSingleton.Instance.Map<MenuDto, TblMenu>(obj);
+                    var value = MapperSingleton.Instance.Map<MenuDto, TblMenu>(obj);
 
-                        db.Menus.Add(value);
+                    this._DataBaseMySQLContext.Menus.Add(value);
 
-                        db.SaveChanges();
+                    this._DataBaseMySQLContext.SaveChanges();
 
-                        return MapperSingleton.Instance.Map<TblMenu, MenuDto>(value);
-                    }
+                    return MapperSingleton.Instance.Map<TblMenu, MenuDto>(value);
                 });
         }
 
@@ -33,14 +37,11 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
             return
                 Task.Factory.StartNew(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        db.Menus.Remove(
-                            db.Menus.Find(id)
-                        );
+                    this._DataBaseMySQLContext.Menus.Remove(
+                        this._DataBaseMySQLContext.Menus.Find(id)
+                    );
 
-                        db.SaveChanges();
-                    }
+                    this._DataBaseMySQLContext.SaveChanges();
                 });
         }
 
@@ -49,12 +50,9 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
             return
                 Task.Factory.StartNew<MenuDto>(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        var value = db.Menus.FindAsync(id);
+                    var value = this._DataBaseMySQLContext.Menus.FindAsync(id);
 
-                        return MapperSingleton.Instance.Map<TblMenu, MenuDto>(value.Result);
-                    }
+                    return MapperSingleton.Instance.Map<TblMenu, MenuDto>(value.Result);
                 });
         }
 
@@ -63,12 +61,9 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
             return
                 Task.Factory.StartNew<IEnumerable<MenuDto>>(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        var value = db.Menus.ToList();
+                    var value = this._DataBaseMySQLContext.Menus.ToList();
 
-                        return MapperSingleton.Instance.Map<IEnumerable<TblMenu>, IEnumerable<MenuDto>>(value);
-                    }
+                    return MapperSingleton.Instance.Map<IEnumerable<TblMenu>, IEnumerable<MenuDto>>(value);
                 });
         }
 
@@ -77,16 +72,13 @@ namespace WebApiRest.NetCore.Models.DaoImpl.MySQL
             return
                 Task.Factory.StartNew(() =>
                 {
-                    using (var db = new TestDBMySQLEntities())
-                    {
-                        var value = db.Menus.Find(obj.Id);
+                    var value = this._DataBaseMySQLContext.Menus.Find(obj.Id);
 
-                        value.ExtUpdate(obj);
+                    value.ExtUpdate(obj);
 
-                        db.Menus.Update(value);
+                    this._DataBaseMySQLContext.Menus.Update(value);
 
-                        db.SaveChanges();
-                    }
+                    this._DataBaseMySQLContext.SaveChanges();
                 });
         }
     }

@@ -2,7 +2,6 @@
 
 namespace WebApiRest.NetCore.Models.Entity.MySQL
 {
-    [Table("user")]
     public class TblUser
     {
         public int Id { get; set; }

@@ -8,9 +8,7 @@ namespace WebApiRest.NetCore.Models.Tools
     private static IMapper instanceMapper = null;
     private static readonly object padlock = new object();
 
-    private MapperSingleton()
-    {
-    }
+    private MapperSingleton() { }
 
     public static IMapper Instance
     {
