@@ -15,7 +15,8 @@ namespace WebApiRest.NetCore.Models.Helpers
         public StatusCode(int statusCode)
         {
             this.Code = statusCode;
-            this.Message = ((HttpStatusCode)statusCode).ToString();
+            this.Message = statusCode != 401 ? ((HttpStatusCode)statusCode).ToString()
+                                             : @"You must connect to ""api/users/auth"" with the ""login"" and ""password"" parameters.";
         }
 
         public override string ToString()

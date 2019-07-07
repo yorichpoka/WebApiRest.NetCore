@@ -143,18 +143,6 @@ namespace WebApiRest.NetCore.Controllers
       }
     }
 
-    // POST api/users
-    [AllowAnonymous]
-    [HttpGet]
-    [Route("auth")]
-    public IActionResult Auth(string statusCode)
-    {
-        return StatusCode(
-          HttpStatusCode.Unauthorized.ExtConvertToInt32(),
-          @"You must connect to ""api/users/auth"" with the ""login"" and ""password"" settings.."
-        );
-    }
-
     // PUT api/users/5
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int? id, [FromBody] UserDto user)
