@@ -7,11 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
-using System.Net;
 using WebApiRest.NetCore.Models;
 using WebApiRest.NetCore.Models.Dao;
-using WebApiRest.NetCore.Models.DaoImpl.SQLServer;
 using WebApiRest.NetCore.Models.Helpers;
 
 namespace WebApiRest.NetCore
@@ -71,11 +68,11 @@ namespace WebApiRest.NetCore
 
             // Add independency injection
             services
-              .AddScoped<IAuthorizationDao, AuthorizationDaoImpl>()
-              .AddScoped<IUserDao, UserDaoImpl>()
-              .AddScoped<IMenuDao, MenuDaoImpl>()
-              .AddScoped<IRoleDao, RoleDaoImpl>()
-              .AddScoped<IGroupMenuDao, GroupMenuDaoImpl>();
+              .AddScoped<IAuthorizationDao, WebApiRest.NetCore.Models.DaoImpl.SQLServer.AuthorizationDaoImpl>()
+              .AddScoped<IUserDao,          WebApiRest.NetCore.Models.DaoImpl.SQLServer.UserDaoImpl>()
+              .AddScoped<IMenuDao,          WebApiRest.NetCore.Models.DaoImpl.SQLServer.MenuDaoImpl>()
+              .AddScoped<IRoleDao,          WebApiRest.NetCore.Models.DaoImpl.SQLServer.RoleDaoImpl>()
+              .AddScoped<IGroupMenuDao,     WebApiRest.NetCore.Models.DaoImpl.SQLServer.GroupMenuDaoImpl>();
 
             // Config IIS
             services
