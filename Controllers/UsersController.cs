@@ -125,7 +125,8 @@ namespace WebApiRest.NetCore.Controllers
           throw new Exception("Login or password was incorrect.");
 
         var token = Methods.GetJWT(
-                      this._Configuration.GetSection("AppSettings:SecurityKey").Value
+                      this._Configuration.GetSection("AppSettings:SecurityKey").Value,
+                      new TimeSpan(0, 0, 5, 0)
                     );
 
         return StatusCode(202, token);
