@@ -1,0 +1,156 @@
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.Swagger;
+using System.Collections.Generic;
+using System.Linq;
+using WebApiRest.NetCore.Domain.Interfaces;
+using WebApiRest.NetCore.Domain.Models;
+using WebApiRest.NetCore.Repositories.Contexts;
+using WebApiRest.NetCore.Tools;
+
+namespace WebApiRest.NetCore
+{
+    public class Startup
+    {
+        public IConfiguration Configuration { get; }
+
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            // Default configuration.
+            services
+                .AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddJsonOptions(l =>
+                {
+                    l.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                });
+
+            // Add swagger.
+            services
+                .AddSwaggerGen(l => {
+                    l.DescribeAllEnumsAsStrings();
+                    l.DescribeAllParametersInCamelCase();
+                    // Add swagger doc.
+                    l.SwaggerDoc(
+                        "v1",
+                        new Info()
+                        {
+                            Version = "v1",
+                            Description = "Web api the type Proof of concept.",
+                            Title = "WebApiRest.NetCore",
+                        }
+                    );
+                    //Add security definition.
+                    l.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                    {
+                        In = "header",
+                        Description = "Please enter jwt with Bearer into field.",
+                        Name = "Authorization",
+                        Type = "apikey"
+                    });
+                    // Add security requiement.
+                    l.AddSecurityRequirement(
+                        new Dictionary<string,
+                        IEnumerable<string>> {
+                            { "Bearer", Enumerable.Empty<string>() }
+                        }
+                    );
+                });
+
+            // Set JWT authentification.
+            services
+              .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+              .AddJwtBearer(options =>
+              {
+                  options.TokenValidationParameters = new TokenValidationParameters
+                  {
+                      // What to valide
+                      ValidateIssuer = true,
+                      ValidateAudience = true,
+                      ValidateIssuerSigningKey = true,
+                      // Setup validate data
+                      ValidIssuer = "projects.in",
+                      ValidAudience = "readers",
+                      IssuerSigningKey = Methods.GetSymmetricSecurityKey(
+                                            Configuration.GetSection("AppSettings:SecurityKey").Value
+                                         )
+                  };
+              });
+
+            // Set context
+            services
+              .AddDbContext<DataBaseSQLServerContext>(options => {
+                  options.UseSqlServer(
+                        Configuration.GetConnectionString("DataBaseSQLServerContextConnectionString")
+                    );
+              })
+              .AddDbContext<DataBaseMySQLContext>(options => {
+                  options.UseMySQL(
+                        Configuration.GetConnectionString("TestDBMySqlEntities")
+                    );
+              });
+
+            // Add independency injection
+            services
+              .AddScoped<IAuthorizationDao,     WebApirest.NetCore.Bussiness.SQLServer.AuthorizationDaoImpl>()
+              .AddScoped<IUserDao,              WebApirest.NetCore.Bussiness.SQLServer.UserDaoImpl>()
+              .AddScoped<IMenuDao,              WebApirest.NetCore.Bussiness.SQLServer.MenuDaoImpl>()
+              .AddScoped<IRoleDao,              WebApirest.NetCore.Bussiness.SQLServer.RoleDaoImpl>()
+              .AddScoped<IGroupMenuDao,         WebApirest.NetCore.Bussiness.SQLServer.GroupMenuDaoImpl>();
+
+            // Config IIS
+            services
+              .Configure<IISOptions>(opt =>
+              {
+                  opt.AutomaticAuthentication = false;
+                  opt.ForwardClientCertificate = false;
+              });
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        {
+            // Custom error message.
+            app.UseStatusCodePages(async context => {
+                context.HttpContext.Response.ContentType = "application/json";
+
+                await context.HttpContext.Response.WriteAsync(
+                    new StatusCodeModel(context.HttpContext.Response.StatusCode).ToString()
+                );
+            });
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint
+            app.UseSwagger();
+            app.UseSwaggerUI(l => {
+                l.SwaggerEndpoint(
+                    url: "../swagger/v1/swagger.json",
+                    name: "WebApiRest.NetCore v1 " + env.EnvironmentName
+                );
+            });
+
+            app.UseCors(l =>
+            {
+                l.AllowAnyOrigin();
+                l.AllowAnyMethod();
+                l.AllowAnyHeader();
+            });
+
+            app.UseAuthentication();
+
+            app.UseMvc();
+        }
+    }
+}
