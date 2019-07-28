@@ -40,7 +40,8 @@ namespace WebApiRest.NetCore
 
             // Add swagger.
             services
-                .AddSwaggerGen(l => {
+                .AddSwaggerGen(l =>
+                {
                     l.DescribeAllEnumsAsStrings();
                     l.DescribeAllParametersInCamelCase();
                     // Add swagger doc.
@@ -92,12 +93,14 @@ namespace WebApiRest.NetCore
 
             // Set context
             services
-              .AddDbContext<DataBaseSQLServerContext>(options => {
+              .AddDbContext<DataBaseSQLServerContext>(options =>
+              {
                   options.UseSqlServer(
                         Configuration.GetConnectionString("DataBaseSQLServerContextConnectionString")
                     );
               })
-              .AddDbContext<DataBaseMySQLContext>(options => {
+              .AddDbContext<DataBaseMySQLContext>(options =>
+              {
                   options.UseMySQL(
                         Configuration.GetConnectionString("TestDBMySqlEntities")
                     );
@@ -105,11 +108,11 @@ namespace WebApiRest.NetCore
 
             // Add independency injection
             services
-              .AddScoped<IAuthorizationDao,     WebApirest.NetCore.Bussiness.SQLServer.AuthorizationDaoImpl>()
-              .AddScoped<IUserDao,              WebApirest.NetCore.Bussiness.SQLServer.UserDaoImpl>()
-              .AddScoped<IMenuDao,              WebApirest.NetCore.Bussiness.SQLServer.MenuDaoImpl>()
-              .AddScoped<IRoleDao,              WebApirest.NetCore.Bussiness.SQLServer.RoleDaoImpl>()
-              .AddScoped<IGroupMenuDao,         WebApirest.NetCore.Bussiness.SQLServer.GroupMenuDaoImpl>();
+              .AddScoped<IAuthorizationDao, WebApirest.NetCore.Bussiness.SQLServer.AuthorizationDaoImpl>()
+              .AddScoped<IUserDao, WebApirest.NetCore.Bussiness.SQLServer.UserDaoImpl>()
+              .AddScoped<IMenuDao, WebApirest.NetCore.Bussiness.SQLServer.MenuDaoImpl>()
+              .AddScoped<IRoleDao, WebApirest.NetCore.Bussiness.SQLServer.RoleDaoImpl>()
+              .AddScoped<IGroupMenuDao, WebApirest.NetCore.Bussiness.SQLServer.GroupMenuDaoImpl>();
 
             // Config IIS
             services
@@ -124,7 +127,8 @@ namespace WebApiRest.NetCore
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             // Custom error message.
-            app.UseStatusCodePages(async context => {
+            app.UseStatusCodePages(async context =>
+            {
                 context.HttpContext.Response.ContentType = "application/json";
 
                 await context.HttpContext.Response.WriteAsync(
@@ -134,7 +138,8 @@ namespace WebApiRest.NetCore
 
             // Enable middleware to serve generated Swagger as a JSON endpoint
             app.UseSwagger();
-            app.UseSwaggerUI(l => {
+            app.UseSwaggerUI(l =>
+            {
                 l.SwaggerEndpoint(
                     url: "../swagger/v1/swagger.json",
                     name: "WebApiRest.NetCore v1 " + env.EnvironmentName
