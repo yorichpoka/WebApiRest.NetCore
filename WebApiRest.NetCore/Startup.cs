@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using WebApiRest.NetCore.Domain.Interfaces;
 using WebApiRest.NetCore.Domain.Models;
+using WebApiRest.NetCore.Filters;
 using WebApiRest.NetCore.Repositories.Contexts;
 using WebApiRest.NetCore.Tools;
 
@@ -19,11 +20,11 @@ namespace WebApiRest.NetCore
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; }
+        public IConfiguration _Configuration { get; }
 
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            this._Configuration = configuration;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -86,7 +87,7 @@ namespace WebApiRest.NetCore
                       ValidIssuer = "projects.in",
                       ValidAudience = "readers",
                       IssuerSigningKey = Methods.GetSymmetricSecurityKey(
-                                            Configuration.GetSection("AppSettings:SecurityKey").Value
+                                            this._Configuration.GetSection("AppSettings:SecurityKey").Value
                                          )
                   };
               });
@@ -96,13 +97,13 @@ namespace WebApiRest.NetCore
               .AddDbContext<DataBaseSQLServerContext>(options =>
               {
                   options.UseSqlServer(
-                        Configuration.GetConnectionString("DataBaseSQLServerContextConnectionString")
+                        _Configuration.GetConnectionString("DataBaseSQLServerContextConnectionString")
                     );
               })
               .AddDbContext<DataBaseMySQLContext>(options =>
               {
                   options.UseMySQL(
-                        Configuration.GetConnectionString("TestDBMySqlEntities")
+                        _Configuration.GetConnectionString("TestDBMySqlEntities")
                     );
               });
 
@@ -113,6 +114,10 @@ namespace WebApiRest.NetCore
               .AddScoped<IMenuDao, WebApirest.NetCore.Bussiness.SQLServer.MenuDaoImpl>()
               .AddScoped<IRoleDao, WebApirest.NetCore.Bussiness.SQLServer.RoleDaoImpl>()
               .AddScoped<IGroupMenuDao, WebApirest.NetCore.Bussiness.SQLServer.GroupMenuDaoImpl>();
+
+            // Add filter in scope.
+            services
+                .AddScoped<CustomActionFilter>();
 
             // Config IIS
             services
@@ -130,6 +135,10 @@ namespace WebApiRest.NetCore
             app.UseStatusCodePages(async context =>
             {
                 context.HttpContext.Response.ContentType = "application/json";
+
+                context.HttpContext.Response.ExtAddVersionInHeaderResponse(
+                    this._Configuration.GetSection("AppSettings:Version").Value
+                );
 
                 await context.HttpContext.Response.WriteAsync(
                     new StatusCodeModel(context.HttpContext.Response.StatusCode).ToString()

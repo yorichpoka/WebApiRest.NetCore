@@ -4,12 +4,14 @@ using System;
 using System.Threading.Tasks;
 using WebApiRest.NetCore.Domain.Interfaces;
 using WebApiRest.NetCore.Domain.Models;
+using WebApiRest.NetCore.Filters;
 
 namespace WebApiRest.NetCore.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
+    [ServiceFilter(typeof(CustomActionFilter))]
     public class AuthorizationsController : ControllerBase
     {
         private readonly IAuthorizationDao _Dao;

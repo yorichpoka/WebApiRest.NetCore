@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using WebApiRest.NetCore.Domain.Interfaces;
 using WebApiRest.NetCore.Domain.Models;
+using WebApiRest.NetCore.Filters;
 using WebApiRest.NetCore.Tools;
 
 namespace WebApiRest.NetCore.Controllers
@@ -12,14 +13,17 @@ namespace WebApiRest.NetCore.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
+    [ServiceFilter(typeof(CustomActionFilter))]
     public class UsersController : ControllerBase
     {
         private readonly IUserDao _Dao;
+        private readonly IRoleDao _DaoRole;
         private readonly IConfiguration _Configuration;
 
-        public UsersController(IUserDao dao, IConfiguration confirugation)
+        public UsersController(IUserDao dao, IRoleDao daoRole, IConfiguration confirugation)
         {
             this._Dao = dao;
+            this._DaoRole = daoRole;
             this._Configuration = confirugation;
         }
 
@@ -115,10 +119,12 @@ namespace WebApiRest.NetCore.Controllers
                 if (user == null)
                     throw new Exception("Missing parameter (user)!");
 
-                var value = await this._Dao.Read(user.Login, user.Password);
+                var userModel = await this._Dao.Read(user.Login, user.Password);
 
-                if (value == null || value.Id == 0)
+                if (userModel == null || userModel.Id == 0)
                     throw new Exception("Login or password was incorrect.");
+
+                var roleModel = await this._DaoRole.Read(userModel.IdRole);
 
                 var token = Methods.GetJWT(
                               this._Configuration.GetSection("AppSettings:SecurityKey").Value,
@@ -126,7 +132,14 @@ namespace WebApiRest.NetCore.Controllers
                             );
 
                 // Set id user.
-                token.User = value;
+                token.User = new UserRoleModel {
+                                Id = userModel.Id,
+                                IdRole = roleModel.Id,
+                                Login = userModel.Login,
+                                Password = userModel.Password,
+                                Name = userModel.Name,
+                                Role = roleModel
+                            };
 
                 return StatusCode(202, token);
             }

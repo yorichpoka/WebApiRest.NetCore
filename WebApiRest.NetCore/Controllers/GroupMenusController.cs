@@ -3,13 +3,16 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using WebApiRest.NetCore.Domain.Interfaces;
+using Microsoft.Extensions.Configuration;
 using WebApiRest.NetCore.Domain.Models;
+using WebApiRest.NetCore.Filters;
 
 namespace WebApiRest.NetCore.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
+    [ServiceFilter(typeof(CustomActionFilter))]
     public class GroupMenusController : ControllerBase
     {
         private readonly IGroupMenuDao _Dao;
