@@ -132,14 +132,15 @@ namespace WebApiRest.NetCore.Controllers
                             );
 
                 // Set id user.
-                token.User = new UserRoleModel {
-                                Id = userModel.Id,
-                                IdRole = roleModel.Id,
-                                Login = userModel.Login,
-                                Password = userModel.Password,
-                                Name = userModel.Name,
-                                Role = roleModel
-                            };
+                token.User = new UserRoleModel
+                {
+                    Id = userModel.Id,
+                    IdRole = roleModel.Id,
+                    Login = userModel.Login,
+                    Password = userModel.Password,
+                    Name = userModel.Name,
+                    Role = roleModel
+                };
 
                 return StatusCode(202, token);
             }

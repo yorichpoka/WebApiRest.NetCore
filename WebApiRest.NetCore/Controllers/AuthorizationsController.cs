@@ -48,7 +48,7 @@ namespace WebApiRest.NetCore.Controllers
         }
 
         // GET api/authorizations/5
-        [HttpPut("{idRole}/{idMenu}")]
+        [HttpGet("{idRole}/{idMenu}")]
         public async Task<IActionResult> Get(int idRole, int idMenu)
         {
             try
@@ -135,7 +135,7 @@ namespace WebApiRest.NetCore.Controllers
         }
 
         // DELETE api/authorizations/5
-        [HttpPut("{idRole}/{idMenu}")]
+        [HttpDelete("{idRole}/{idMenu}")]
         public async Task<IActionResult> Delete(int? idRole, int? idMenu)
         {
             try

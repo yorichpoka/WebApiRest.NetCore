@@ -41,33 +41,30 @@ namespace WebApiRest.NetCore
 
             // Add swagger.
             services
-                .AddSwaggerGen(l =>
-                {
-                    l.DescribeAllEnumsAsStrings();
-                    l.DescribeAllParametersInCamelCase();
+                .AddSwaggerGen(l => {
                     // Add swagger doc.
                     l.SwaggerDoc(
                         "v1",
-                        new Info()
-                        {
+                        new Info() {
                             Version = "v1",
                             Description = "Web api the type Proof of concept.",
                             Title = "WebApiRest.NetCore",
                         }
                     );
                     //Add security definition.
-                    l.AddSecurityDefinition("Bearer", new ApiKeyScheme
-                    {
-                        In = "header",
-                        Description = "Please enter jwt with Bearer into field.",
-                        Name = "Authorization",
-                        Type = "apikey"
-                    });
+                    l.AddSecurityDefinition(
+                        "Bearer", 
+                        new ApiKeyScheme {
+                            Description = "Please enter jwt with Bearer into field.",
+                            In = "header",
+                            Name = "Authorization",
+                            Type = "apikey"
+                        }
+                    );
                     // Add security requiement.
                     l.AddSecurityRequirement(
-                        new Dictionary<string,
-                        IEnumerable<string>> {
-                            { "Bearer", Enumerable.Empty<string>() }
+                        new Dictionary<string, IEnumerable<string>> {
+                            { "Bearer", Enumerable.Empty<string>() },
                         }
                     );
                 });
