@@ -128,7 +128,7 @@ namespace WebApiRest.NetCore.Controllers
 
                 var token = Methods.GetJWT(
                               this._Configuration.GetSection("AppSettings:SecurityKey").Value,
-                              new TimeSpan(0, 0, 5, 0)
+                              new TimeSpan(0, 1, 0, 0)
                             );
 
                 // Set id user.
