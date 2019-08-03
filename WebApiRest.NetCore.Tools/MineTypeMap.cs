@@ -4,14 +4,14 @@ using System.Linq;
 
 namespace WebApiRest.NetCore.Tools
 {
-  public static class MimeTypeMap
-  {
-    private static readonly Lazy<IDictionary<string, string>> _mappings = new Lazy<IDictionary<string, string>>(BuildMappings);
-
-    private static IDictionary<string, string> BuildMappings()
+    public static class MimeTypeMap
     {
-      var mappings =
-        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
+        private static readonly Lazy<IDictionary<string, string>> _mappings = new Lazy<IDictionary<string, string>>(BuildMappings);
+
+        private static IDictionary<string, string> BuildMappings()
+        {
+            var mappings =
+              new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
 
           #region Big freaking list of mime types
 
@@ -678,60 +678,60 @@ namespace WebApiRest.NetCore.Tools
           {"video/x-ms-asf", ".asf"},
           {"x-world/x-vrml", ".xof"},
 
-          #endregion Big freaking list of mime types
-        };
+                  #endregion Big freaking list of mime types
+              };
 
-      var cache = mappings.ToList(); // need ToList() to avoid modifying while still enumerating
+            var cache = mappings.ToList(); // need ToList() to avoid modifying while still enumerating
 
-      foreach (var mapping in cache)
-      {
-        if (!mappings.ContainsKey(mapping.Value))
-        {
-          mappings.Add(mapping.Value, mapping.Key);
+            foreach (var mapping in cache)
+            {
+                if (!mappings.ContainsKey(mapping.Value))
+                {
+                    mappings.Add(mapping.Value, mapping.Key);
+                }
+            }
+
+            return mappings;
         }
-      }
 
-      return mappings;
+        public static string GetMimeType(string extension)
+        {
+            if (extension == null)
+            {
+                throw new ArgumentNullException("extension");
+            }
+
+            if (!extension.StartsWith("."))
+            {
+                extension = "." + extension;
+            }
+
+            string mime;
+
+            return _mappings.Value.TryGetValue(extension, out mime) ? mime
+                                                                    : "application/octet-stream";
+        }
+
+        public static string GetExtension(string mimeType)
+        {
+            if (mimeType == null)
+            {
+                throw new ArgumentNullException("mimeType");
+            }
+
+            if (mimeType.StartsWith("."))
+            {
+                throw new ArgumentException("Requested mime type is not valid: " + mimeType);
+            }
+
+            string extension;
+
+            if (_mappings.Value.TryGetValue(mimeType, out extension))
+            {
+                return extension;
+            }
+
+            throw new ArgumentException("Requested mime type is not registered: " + mimeType);
+        }
     }
-
-    public static string GetMimeType(string extension)
-    {
-      if (extension == null)
-      {
-        throw new ArgumentNullException("extension");
-      }
-
-      if (!extension.StartsWith("."))
-      {
-        extension = "." + extension;
-      }
-
-      string mime;
-
-      return _mappings.Value.TryGetValue(extension, out mime) ? mime
-                                                              : "application/octet-stream";
-    }
-
-    public static string GetExtension(string mimeType)
-    {
-      if (mimeType == null)
-      {
-        throw new ArgumentNullException("mimeType");
-      }
-
-      if (mimeType.StartsWith("."))
-      {
-        throw new ArgumentException("Requested mime type is not valid: " + mimeType);
-      }
-
-      string extension;
-
-      if (_mappings.Value.TryGetValue(mimeType, out extension))
-      {
-        return extension;
-      }
-
-      throw new ArgumentException("Requested mime type is not registered: " + mimeType);
-    }
-  }
 }

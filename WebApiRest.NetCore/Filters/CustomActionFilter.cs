@@ -12,7 +12,9 @@ namespace WebApiRest.NetCore.Filters
             this._Configuration = confirugation;
         }
 
-        public void OnActionExecuting(ActionExecutingContext context) { }
+        public void OnActionExecuting(ActionExecutingContext context)
+        {
+        }
 
         public void OnActionExecuted(ActionExecutedContext context)
         {

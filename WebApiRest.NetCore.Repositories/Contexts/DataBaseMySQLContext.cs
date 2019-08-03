@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Configuration;
 using WebApiRest.NetCore.Repositories.Entities.MySQL;
 
 namespace WebApiRest.NetCore.Repositories.Contexts
@@ -12,9 +11,13 @@ namespace WebApiRest.NetCore.Repositories.Contexts
         public virtual DbSet<TblRole> Roles { get; set; }
         public virtual DbSet<TblUser> Users { get; set; }
 
-        public DataBaseMySQLContext() { }
+        public DataBaseMySQLContext()
+        {
+        }
 
-        public DataBaseMySQLContext(DbContextOptions<DataBaseMySQLContext> options) : base(options) { }
+        public DataBaseMySQLContext(DbContextOptions<DataBaseMySQLContext> options) : base(options)
+        {
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

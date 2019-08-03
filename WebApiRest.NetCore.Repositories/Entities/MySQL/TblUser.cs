@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace WebApiRest.NetCore.Repositories.Entities.MySQL
+﻿namespace WebApiRest.NetCore.Repositories.Entities.MySQL
 {
     public class TblUser
     {

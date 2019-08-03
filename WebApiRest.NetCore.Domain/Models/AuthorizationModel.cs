@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WebApiRest.NetCore.Domain.Models  
+namespace WebApiRest.NetCore.Domain.Models
 {
     public class AuthorizationModel
     {

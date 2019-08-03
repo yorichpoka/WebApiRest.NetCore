@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace WebApiRest.NetCore.Repositories.Entities.SQLServer
+﻿namespace WebApiRest.NetCore.Repositories.Entities.SQLServer
 {
     public partial class User
     {

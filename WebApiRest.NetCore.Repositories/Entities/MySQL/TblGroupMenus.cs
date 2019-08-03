@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApiRest.NetCore.Repositories.Entities.MySQL
 {

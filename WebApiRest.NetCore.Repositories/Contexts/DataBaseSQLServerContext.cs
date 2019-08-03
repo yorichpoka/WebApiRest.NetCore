@@ -11,9 +11,13 @@ namespace WebApiRest.NetCore.Repositories.Contexts
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<User> Users { get; set; }
 
-        public DataBaseSQLServerContext() { }
+        public DataBaseSQLServerContext()
+        {
+        }
 
-        public DataBaseSQLServerContext(DbContextOptions<DataBaseSQLServerContext> options) : base(options) { }
+        public DataBaseSQLServerContext(DbContextOptions<DataBaseSQLServerContext> options) : base(options)
+        {
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
