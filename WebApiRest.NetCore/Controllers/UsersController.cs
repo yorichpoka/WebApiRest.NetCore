@@ -110,8 +110,7 @@ namespace WebApiRest.NetCore.Controllers
 
         // POST api/users
         [AllowAnonymous]
-        [HttpPost]
-        [Route("auth")]
+        [HttpPost("auth")]
         public async Task<IActionResult> Auth([FromBody] UserModel user)
         {
             try
