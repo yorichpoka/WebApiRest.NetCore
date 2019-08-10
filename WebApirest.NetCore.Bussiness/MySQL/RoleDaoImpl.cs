@@ -1,86 +1,48 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using WebApiRest.NetCore.Domain.Interfaces;
+using WebApiRest.NetCore.Domain.Interfaces.Bussiness;
+using WebApiRest.NetCore.Domain.Interfaces.Repositories;
 using WebApiRest.NetCore.Domain.Models;
-using WebApiRest.NetCore.Repositories.Contexts;
-using WebApiRest.NetCore.Repositories.Entities.MySQL;
-using WebApiRest.NetCore.Tools;
 
 namespace WebApirest.NetCore.Bussiness.MySQL
 {
-    public class RoleDaoImpl : IRoleDao
+    public class RoleBussinessImpl : IRoleBussiness
     {
-        private readonly DataBaseMySQLContext _DataBaseMySQLContext;
+        private readonly IRoleRepository _RoleRepository;
 
-        public RoleDaoImpl(DataBaseMySQLContext dataBaseMySQLContext)
+        public RoleBussinessImpl(IRoleRepository repository)
         {
-            this._DataBaseMySQLContext = dataBaseMySQLContext;
+            this._RoleRepository = repository;
         }
 
         public Task<RoleModel> Create(RoleModel obj)
         {
             return
-                Task.Factory.StartNew<RoleModel>(() =>
-                {
-                    var value = MapperSingleton.Instance.Map<RoleModel, TblRole>(obj);
-
-                    this._DataBaseMySQLContext.Roles.Add(value);
-
-                    this._DataBaseMySQLContext.SaveChanges();
-
-                    return MapperSingleton.Instance.Map<TblRole, RoleModel>(value);
-                });
+                this._RoleRepository.Create(obj);
         }
 
         public Task Delete(int id)
         {
             return
-                Task.Factory.StartNew(() =>
-                {
-                    this._DataBaseMySQLContext.Roles.Remove(
-                        this._DataBaseMySQLContext.Roles.Find(id)
-                    );
-
-                    this._DataBaseMySQLContext.SaveChanges();
-                });
+                this._RoleRepository.Delete(id);
         }
 
         public Task<RoleModel> Read(int id)
         {
             return
-                Task.Factory.StartNew<RoleModel>(() =>
-                {
-                    var value = this._DataBaseMySQLContext.Roles.FindAsync(id);
-
-                    return MapperSingleton.Instance.Map<TblRole, RoleModel>(value.Result);
-                });
+                this._RoleRepository.Read(id);
         }
 
         public Task<IEnumerable<RoleModel>> Read()
         {
             return
-                Task.Factory.StartNew<IEnumerable<RoleModel>>(() =>
-                {
-                    var value = this._DataBaseMySQLContext.Roles.ToList();
-
-                    return MapperSingleton.Instance.Map<IEnumerable<TblRole>, IEnumerable<RoleModel>>(value);
-                });
+                this._RoleRepository.Read();
         }
 
         public Task Update(RoleModel obj)
         {
             return
-                Task.Factory.StartNew(() =>
-                {
-                    var value = this._DataBaseMySQLContext.Roles.Find(obj.Id);
-
-                    value.ExtUpdate(obj);
-
-                    this._DataBaseMySQLContext.Roles.Update(value);
-
-                    this._DataBaseMySQLContext.SaveChanges();
-                });
+                this._RoleRepository.Update(obj);
         }
     }
 }

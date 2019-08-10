@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using WebApiRest.NetCore.Domain.Models;
 
-namespace WebApiRest.NetCore.Domain.Interfaces
+namespace WebApiRest.NetCore.Domain.Interfaces.Repositories
 {
-    public interface IMenuDao
+    public interface IMenuRepository
     {
         Task<MenuModel> Create(MenuModel obj);
 

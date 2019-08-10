@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using WebApiRest.NetCore.Domain.Interfaces;
+using WebApiRest.NetCore.Domain.Interfaces.Bussiness;
 using WebApiRest.NetCore.Domain.Models;
 using WebApiRest.NetCore.Filters;
 
@@ -14,9 +14,9 @@ namespace WebApiRest.NetCore.Controllers
     [ServiceFilter(typeof(CustomActionFilter))]
     public class MenusController : ControllerBase
     {
-        private readonly IMenuDao _Dao;
+        private readonly IMenuBussiness _Dao;
 
-        public MenusController(IMenuDao dao)
+        public MenusController(IMenuBussiness dao)
         {
             this._Dao = dao;
         }

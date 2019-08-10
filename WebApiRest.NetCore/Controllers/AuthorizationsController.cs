@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using WebApiRest.NetCore.Domain.Interfaces;
+using WebApiRest.NetCore.Domain.Interfaces.Bussiness;
 using WebApiRest.NetCore.Domain.Models;
 using WebApiRest.NetCore.Filters;
 
@@ -14,9 +14,9 @@ namespace WebApiRest.NetCore.Controllers
     [ServiceFilter(typeof(CustomActionFilter))]
     public class AuthorizationsController : ControllerBase
     {
-        private readonly IAuthorizationDao _Dao;
+        private readonly IAuthorizationBussiness _Dao;
 
-        public AuthorizationsController(IAuthorizationDao dao)
+        public AuthorizationsController(IAuthorizationBussiness dao)
         {
             this._Dao = dao;
         }

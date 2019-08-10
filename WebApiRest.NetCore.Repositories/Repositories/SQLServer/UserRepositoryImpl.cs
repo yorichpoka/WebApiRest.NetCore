@@ -1,22 +1,25 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebApiRest.NetCore.Domain.Interfaces;
+using WebApiRest.NetCore.Domain.Interfaces.Repositories;
 using WebApiRest.NetCore.Domain.Models;
+using WebApiRest.NetCore.Repositories;
 using WebApiRest.NetCore.Repositories.Contexts;
 using WebApiRest.NetCore.Repositories.Entities.SQLServer;
-using WebApiRest.NetCore.Tools;
 
-namespace WebApirest.NetCore.Bussiness.SQLServer
+namespace WebApirest.NetCore.Repositories.SQLServer
 {
-    public class UserDaoImpl : IUserDao
+    public class UserRepositoryImpl : IUserRepository
     {
         private readonly DataBaseSQLServerContext _DataBaseSQLServerContext;
+        private readonly IMapper _Mapper;
 
-        public UserDaoImpl(DataBaseSQLServerContext dataBaseSQLServerContext)
+        public UserRepositoryImpl(DataBaseSQLServerContext dataBaseSQLServerContext, IMapper mapper)
         {
             this._DataBaseSQLServerContext = dataBaseSQLServerContext;
+            this._Mapper = mapper;
         }
 
         public Task<UserModel> Create(UserModel obj)
@@ -24,13 +27,13 @@ namespace WebApirest.NetCore.Bussiness.SQLServer
             return
                 Task.Factory.StartNew<UserModel>(() =>
                 {
-                    var value = MapperSingleton.Instance.Map<UserModel, User>(obj);
+                    var value = this._Mapper.Map<UserModel, User>(obj);
 
                     this._DataBaseSQLServerContext.Users.Add(value);
 
                     this._DataBaseSQLServerContext.SaveChanges();
 
-                    return MapperSingleton.Instance.Map<User, UserModel>(value);
+                    return this._Mapper.Map<User, UserModel>(value);
                 });
         }
 
@@ -54,7 +57,7 @@ namespace WebApirest.NetCore.Bussiness.SQLServer
                 {
                     var value = this._DataBaseSQLServerContext.Users.FindAsync(id);
 
-                    return MapperSingleton.Instance.Map<User, UserModel>(value.Result);
+                    return this._Mapper.Map<User, UserModel>(value.Result);
                 });
         }
 
@@ -65,7 +68,7 @@ namespace WebApirest.NetCore.Bussiness.SQLServer
                 {
                     var value = this._DataBaseSQLServerContext.Users.FirstOrDefaultAsync(l => l.Login == login && l.Password == password);
 
-                    return MapperSingleton.Instance.Map<User, UserModel>(value.Result);
+                    return this._Mapper.Map<User, UserModel>(value.Result);
                 });
         }
 
@@ -76,7 +79,7 @@ namespace WebApirest.NetCore.Bussiness.SQLServer
                 {
                     var value = this._DataBaseSQLServerContext.Users.ToList();
 
-                    return MapperSingleton.Instance.Map<IEnumerable<User>, IEnumerable<UserModel>>(value);
+                    return this._Mapper.Map<IEnumerable<User>, IEnumerable<UserModel>>(value);
                 });
         }
 
@@ -87,7 +90,7 @@ namespace WebApirest.NetCore.Bussiness.SQLServer
                 {
                     var value = this._DataBaseSQLServerContext.Users.Include(l => l.Role).ToList();
 
-                    return MapperSingleton.Instance.Map<IEnumerable<User>, IEnumerable<UserRoleModel>>(value);
+                    return this._Mapper.Map<IEnumerable<User>, IEnumerable<UserRoleModel>>(value);
                 });
         }
 

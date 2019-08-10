@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using WebApiRest.NetCore.Domain.Models;
 
-namespace WebApiRest.NetCore.Domain.Interfaces
+namespace WebApiRest.NetCore.Domain.Interfaces.Bussiness
 {
-    public interface IAuthorizationDao
+    public interface IAuthorizationBussiness
     {
         Task<AuthorizationModel> Create(AuthorizationModel obj);
 

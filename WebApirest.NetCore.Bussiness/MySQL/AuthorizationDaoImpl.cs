@@ -1,87 +1,48 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using WebApiRest.NetCore.Domain.Interfaces;
+using WebApiRest.NetCore.Domain.Interfaces.Bussiness;
+using WebApiRest.NetCore.Domain.Interfaces.Repositories;
 using WebApiRest.NetCore.Domain.Models;
-using WebApiRest.NetCore.Repositories.Contexts;
-using WebApiRest.NetCore.Repositories.Entities.MySQL;
-using WebApiRest.NetCore.Tools;
 
 namespace WebApirest.NetCore.Bussiness.MySQL
 {
-    public class AuthorizationDaoImpl : IAuthorizationDao
+    public class AuthorizationBussinessImpl : IAuthorizationBussiness
     {
-        private readonly DataBaseMySQLContext _DataBaseMySQLContext;
+        private readonly IAuthorizationRepository _AuthorizationRepository;
 
-        public AuthorizationDaoImpl(DataBaseMySQLContext _dataBaseMySQLContext)
+        public AuthorizationBussinessImpl(IAuthorizationRepository repository)
         {
-            this._DataBaseMySQLContext = _dataBaseMySQLContext;
+            this._AuthorizationRepository = repository;
         }
 
         public Task<AuthorizationModel> Create(AuthorizationModel obj)
         {
             return
-                Task.Factory.StartNew<AuthorizationModel>(() =>
-                {
-                    var value = MapperSingleton.Instance.Map<AuthorizationModel, TblAuthorization>(obj);
-
-                    this._DataBaseMySQLContext.Authorizations.Add(value);
-
-                    this._DataBaseMySQLContext.SaveChanges();
-
-                    return MapperSingleton.Instance.Map<TblAuthorization, AuthorizationModel>(value);
-                });
+                this._AuthorizationRepository.Create(obj);
         }
 
         public Task Delete(int idRole, int idMenu)
         {
             return
-                Task.Factory.StartNew(() =>
-                {
-                    this._DataBaseMySQLContext.Authorizations.Remove(
-                        this._DataBaseMySQLContext.Authorizations.FirstOrDefault(l => l.IdRole == idRole && l.IdMenu == idMenu)
-                    );
-
-                    this._DataBaseMySQLContext.SaveChanges();
-                });
+                this._AuthorizationRepository.Delete(idRole, idMenu);
         }
 
         public Task<AuthorizationModel> Read(int idRole, int idMenu)
         {
             return
-                Task.Factory.StartNew<AuthorizationModel>(() =>
-                {
-                    var value = this._DataBaseMySQLContext.Authorizations.FirstOrDefaultAsync(l => l.IdRole == idRole && l.IdMenu == idMenu);
-
-                    return MapperSingleton.Instance.Map<TblAuthorization, AuthorizationModel>(value.Result);
-                });
+                this._AuthorizationRepository.Read(idRole, idMenu);
         }
 
         public Task<IEnumerable<AuthorizationModel>> Read()
         {
             return
-                Task.Factory.StartNew<IEnumerable<AuthorizationModel>>(() =>
-                {
-                    var value = this._DataBaseMySQLContext.Authorizations.ToList();
-
-                    return MapperSingleton.Instance.Map<IEnumerable<TblAuthorization>, IEnumerable<AuthorizationModel>>(value);
-                });
+                this._AuthorizationRepository.Read();
         }
 
         public Task Update(AuthorizationModel obj)
         {
             return
-                Task.Factory.StartNew(() =>
-                {
-                    var value = this._DataBaseMySQLContext.Authorizations.FirstOrDefaultAsync(l => l.IdRole == obj.IdRole && l.IdMenu == obj.IdMenu);
-
-                    //value.Result.ExtUpdate(obj);
-
-                    this._DataBaseMySQLContext.Authorizations.Update(value.Result);
-
-                    this._DataBaseMySQLContext.SaveChanges();
-                });
+                this._AuthorizationRepository.Update(obj);
         }
     }
 }

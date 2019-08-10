@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using WebApiRest.NetCore.Domain.Models;
 
-namespace WebApiRest.NetCore.Domain.Interfaces
+namespace WebApiRest.NetCore.Domain.Interfaces.Bussiness
 {
-    public interface IGroupMenuDao
+    public interface IGroupMenuBussiness
     {
         Task<GroupMenuModel> Create(GroupMenuModel obj);
 

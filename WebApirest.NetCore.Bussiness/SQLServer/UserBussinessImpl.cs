@@ -4,7 +4,7 @@ using WebApiRest.NetCore.Domain.Interfaces.Bussiness;
 using WebApiRest.NetCore.Domain.Interfaces.Repositories;
 using WebApiRest.NetCore.Domain.Models;
 
-namespace WebApirest.NetCore.Bussiness.MySQL
+namespace WebApirest.NetCore.Bussiness.SQLServer
 {
     public class UserBussinessImpl : IUserBussiness
     {

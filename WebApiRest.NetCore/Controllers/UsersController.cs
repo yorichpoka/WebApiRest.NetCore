@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Threading.Tasks;
-using WebApiRest.NetCore.Domain.Interfaces;
+using WebApiRest.NetCore.Domain.Interfaces.Bussiness;
 using WebApiRest.NetCore.Domain.Models;
 using WebApiRest.NetCore.Filters;
 using WebApiRest.NetCore.Tools;
@@ -16,11 +16,11 @@ namespace WebApiRest.NetCore.Controllers
     [ServiceFilter(typeof(CustomActionFilter))]
     public class UsersController : ControllerBase
     {
-        private readonly IUserDao _Dao;
-        private readonly IRoleDao _DaoRole;
+        private readonly IUserBussiness _Dao;
+        private readonly IRoleBussiness _DaoRole;
         private readonly IConfiguration _Configuration;
 
-        public UsersController(IUserDao dao, IRoleDao daoRole, IConfiguration confirugation)
+        public UsersController(IUserBussiness dao, IRoleBussiness daoRole, IConfiguration confirugation)
         {
             this._Dao = dao;
             this._DaoRole = daoRole;

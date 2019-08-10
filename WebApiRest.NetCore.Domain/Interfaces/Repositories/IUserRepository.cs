@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using WebApiRest.NetCore.Domain.Models;
 
-namespace WebApiRest.NetCore.Domain.Interfaces
+namespace WebApiRest.NetCore.Domain.Interfaces.Repositories
 {
-    public interface IUserDao
+    public interface IUserRepository
     {
         Task<UserModel> Create(UserModel obj);
 

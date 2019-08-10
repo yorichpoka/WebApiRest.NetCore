@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -10,7 +11,8 @@ using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Collections.Generic;
 using System.Linq;
-using WebApiRest.NetCore.Domain.Interfaces;
+using WebApiRest.NetCore.Domain.Interfaces.Bussiness;
+using WebApiRest.NetCore.Domain.Interfaces.Repositories;
 using WebApiRest.NetCore.Domain.Models;
 using WebApiRest.NetCore.Filters;
 using WebApiRest.NetCore.Repositories.Contexts;
@@ -107,13 +109,25 @@ namespace WebApiRest.NetCore
                     );
               });
 
+            // Add AutoMapper.
+            services
+                .AddAutoMapper();
+
             // Add independency injection
             services
-              .AddScoped<IAuthorizationDao, WebApirest.NetCore.Bussiness.SQLServer.AuthorizationDaoImpl>()
-              .AddScoped<IUserDao, WebApirest.NetCore.Bussiness.SQLServer.UserDaoImpl>()
-              .AddScoped<IMenuDao, WebApirest.NetCore.Bussiness.SQLServer.MenuDaoImpl>()
-              .AddScoped<IRoleDao, WebApirest.NetCore.Bussiness.SQLServer.RoleDaoImpl>()
-              .AddScoped<IGroupMenuDao, WebApirest.NetCore.Bussiness.SQLServer.GroupMenuDaoImpl>();
+              .AddScoped<IAuthorizationRepository, WebApirest.NetCore.Repositories.SQLServer.AuthorizationRepositoryImpl>()
+              .AddScoped<IUserRepository, WebApirest.NetCore.Repositories.SQLServer.UserRepositoryImpl>()
+              .AddScoped<IMenuRepository, WebApirest.NetCore.Repositories.SQLServer.MenuRepositoryImpl>()
+              .AddScoped<IRoleRepository, WebApirest.NetCore.Repositories.SQLServer.RoleRepositoryImpl>()
+              .AddScoped<IGroupMenuRepository, WebApirest.NetCore.Repositories.SQLServer.GroupMenuRepositoryImpl>();
+
+            // Add independency injection
+            services
+              .AddScoped<IAuthorizationBussiness, WebApirest.NetCore.Bussiness.SQLServer.AuthorizationBussinessImpl>()
+              .AddScoped<IUserBussiness, WebApirest.NetCore.Bussiness.SQLServer.UserBussinessImpl>()
+              .AddScoped<IMenuBussiness, WebApirest.NetCore.Bussiness.SQLServer.MenuBussinessImpl>()
+              .AddScoped<IRoleBussiness, WebApirest.NetCore.Bussiness.SQLServer.RoleBussinessImpl>()
+              .AddScoped<IGroupMenuBussiness, WebApirest.NetCore.Bussiness.SQLServer.GroupMenuBussinessImpl>();
 
             // Add filter in scope.
             services
