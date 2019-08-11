@@ -14,11 +14,11 @@ namespace WebApiRest.NetCore.Controllers
     [ServiceFilter(typeof(CustomActionFilter))]
     public class MenusController : ControllerBase
     {
-        private readonly IMenuBussiness _Dao;
+        private readonly IMenuBussiness _Bussiness;
 
-        public MenusController(IMenuBussiness dao)
+        public MenusController(IMenuBussiness bussiness)
         {
-            this._Dao = dao;
+            this._Bussiness = bussiness;
         }
 
         // GET api/groupMenus
@@ -27,7 +27,7 @@ namespace WebApiRest.NetCore.Controllers
         {
             try
             {
-                var values = await this._Dao.Read();
+                var values = await this._Bussiness.Read();
 
                 if (values == null)
                     throw new Exception();
@@ -53,7 +53,7 @@ namespace WebApiRest.NetCore.Controllers
         {
             try
             {
-                var values = await this._Dao.Read(id);
+                var values = await this._Bussiness.Read(id);
 
                 if (values == null)
                     throw new Exception();
@@ -82,7 +82,7 @@ namespace WebApiRest.NetCore.Controllers
                 if (groupMenu == null)
                     throw new Exception("Missing parameter (groupMenu)!");
 
-                var value = await this._Dao.Create(groupMenu);
+                var value = await this._Bussiness.Create(groupMenu);
 
                 if (value == null || value.Id == 0)
                     throw new Exception();
@@ -116,7 +116,7 @@ namespace WebApiRest.NetCore.Controllers
 
                 groupMenu.Id = id.Value;
 
-                await this._Dao.Update(groupMenu);
+                await this._Bussiness.Update(groupMenu);
 
                 return Accepted();
             }
@@ -142,7 +142,7 @@ namespace WebApiRest.NetCore.Controllers
                 if (id.Value == 0)
                     throw new Exception("The resource id must not be 0!");
 
-                await this._Dao.Delete(id.Value);
+                await this._Bussiness.Delete(id.Value);
 
                 return Ok();
             }

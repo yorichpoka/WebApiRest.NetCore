@@ -14,11 +14,11 @@ namespace WebApiRest.NetCore.Controllers
     [ServiceFilter(typeof(CustomActionFilter))]
     public class AuthorizationsController : ControllerBase
     {
-        private readonly IAuthorizationBussiness _Dao;
+        private readonly IAuthorizationBussiness _Bussiness;
 
-        public AuthorizationsController(IAuthorizationBussiness dao)
+        public AuthorizationsController(IAuthorizationBussiness bussiness)
         {
-            this._Dao = dao;
+            this._Bussiness = bussiness;
         }
 
         // GET api/authorizations
@@ -27,7 +27,7 @@ namespace WebApiRest.NetCore.Controllers
         {
             try
             {
-                var values = await this._Dao.Read();
+                var values = await this._Bussiness.Read();
 
                 if (values == null)
                     throw new Exception();
@@ -53,7 +53,7 @@ namespace WebApiRest.NetCore.Controllers
         {
             try
             {
-                var values = await this._Dao.Read(idRole, idMenu);
+                var values = await this._Bussiness.Read(idRole, idMenu);
 
                 if (values == null)
                     throw new Exception();
@@ -82,7 +82,7 @@ namespace WebApiRest.NetCore.Controllers
                 if (authorization == null)
                     throw new Exception("Missing parameter (authorization)!");
 
-                var value = await this._Dao.Create(authorization);
+                var value = await this._Bussiness.Create(authorization);
 
                 return Created($"authorization/{value.IdMenu}/{value.IdRole}", value);
             }
@@ -117,7 +117,7 @@ namespace WebApiRest.NetCore.Controllers
                 authorization.IdRole = idRole.Value;
                 authorization.IdMenu = idMenu.Value;
 
-                await this._Dao.Update(authorization);
+                await this._Bussiness.Update(authorization);
 
                 return Accepted();
             }
@@ -146,7 +146,7 @@ namespace WebApiRest.NetCore.Controllers
                 if (idMenu.Value == 0)
                     throw new Exception("The resource idMenu must not be 0!");
 
-                await this._Dao.Delete(idRole.Value, idMenu.Value);
+                await this._Bussiness.Delete(idRole.Value, idMenu.Value);
 
                 return Ok();
             }

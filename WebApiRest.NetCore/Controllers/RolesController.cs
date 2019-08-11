@@ -14,11 +14,11 @@ namespace WebApiRest.NetCore.Controllers
     [ServiceFilter(typeof(CustomActionFilter))]
     public class RolesController : ControllerBase
     {
-        private readonly IRoleBussiness _Dao;
+        private readonly IRoleBussiness _Bussiness;
 
-        public RolesController(IRoleBussiness dao)
+        public RolesController(IRoleBussiness business)
         {
-            this._Dao = dao;
+            this._Bussiness = business;
         }
 
         // GET api/roles
@@ -27,7 +27,7 @@ namespace WebApiRest.NetCore.Controllers
         {
             try
             {
-                var values = await this._Dao.Read();
+                var values = await this._Bussiness.Read();
 
                 if (values == null)
                     throw new Exception();
@@ -53,7 +53,7 @@ namespace WebApiRest.NetCore.Controllers
         {
             try
             {
-                var values = await this._Dao.Read(id);
+                var values = await this._Bussiness.Read(id);
 
                 if (values == null)
                     throw new Exception();
@@ -82,7 +82,7 @@ namespace WebApiRest.NetCore.Controllers
                 if (role == null)
                     throw new Exception("Missing parameter (role)!");
 
-                var value = await this._Dao.Create(role);
+                var value = await this._Bussiness.Create(role);
 
                 if (value == null || value.Id == 0)
                     throw new Exception();
@@ -116,7 +116,7 @@ namespace WebApiRest.NetCore.Controllers
 
                 role.Id = id.Value;
 
-                await this._Dao.Update(role);
+                await this._Bussiness.Update(role);
 
                 return Accepted();
             }
@@ -142,7 +142,7 @@ namespace WebApiRest.NetCore.Controllers
                 if (id.Value == 0)
                     throw new Exception("The resource id must not be 0!");
 
-                await this._Dao.Delete(id.Value);
+                await this._Bussiness.Delete(id.Value);
 
                 return Ok();
             }

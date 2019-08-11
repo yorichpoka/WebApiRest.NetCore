@@ -16,14 +16,14 @@ namespace WebApiRest.NetCore.Controllers
     [ServiceFilter(typeof(CustomActionFilter))]
     public class UsersController : ControllerBase
     {
-        private readonly IUserBussiness _Dao;
-        private readonly IRoleBussiness _DaoRole;
+        private readonly IUserBussiness _Bussiness;
+        private readonly IRoleBussiness _BussinessRole;
         private readonly IConfiguration _Configuration;
 
         public UsersController(IUserBussiness dao, IRoleBussiness daoRole, IConfiguration confirugation)
         {
-            this._Dao = dao;
-            this._DaoRole = daoRole;
+            this._Bussiness = dao;
+            this._BussinessRole = daoRole;
             this._Configuration = confirugation;
         }
 
@@ -33,7 +33,7 @@ namespace WebApiRest.NetCore.Controllers
         {
             try
             {
-                var values = await this._Dao.ReadWithRoles();
+                var values = await this._Bussiness.ReadWithRoles();
 
                 if (values == null)
                     throw new Exception();
@@ -59,7 +59,7 @@ namespace WebApiRest.NetCore.Controllers
         {
             try
             {
-                var values = await this._Dao.Read(id);
+                var values = await this._Bussiness.Read(id);
 
                 if (values == null)
                     throw new Exception();
@@ -88,7 +88,7 @@ namespace WebApiRest.NetCore.Controllers
                 if (user == null)
                     throw new Exception("Missing parameter (user)!");
 
-                var value = await this._Dao.Create(user);
+                var value = await this._Bussiness.Create(user);
 
                 if (value == null || value.Id == 0)
                     throw new Exception();
@@ -118,12 +118,12 @@ namespace WebApiRest.NetCore.Controllers
                 if (user == null)
                     throw new Exception("Missing parameter (user)!");
 
-                var userModel = await this._Dao.Read(user.Login, user.Password);
+                var userModel = await this._Bussiness.Read(user.Login, user.Password);
 
                 if (userModel == null || userModel.Id == 0)
                     throw new Exception("Login or password was incorrect.");
 
-                var roleModel = await this._DaoRole.Read(userModel.IdRole);
+                var roleModel = await this._BussinessRole.Read(userModel.IdRole);
 
                 var token = Methods.GetJWT(
                               this._Configuration.GetSection("AppSettings:SecurityKey").Value,
@@ -170,7 +170,7 @@ namespace WebApiRest.NetCore.Controllers
 
                 user.Id = id.Value;
 
-                await this._Dao.Update(user);
+                await this._Bussiness.Update(user);
 
                 return Accepted();
             }
@@ -196,7 +196,7 @@ namespace WebApiRest.NetCore.Controllers
                 if (id.Value == 0)
                     throw new Exception("The resource id must not be 0!");
 
-                await this._Dao.Delete(id.Value);
+                await this._Bussiness.Delete(id.Value);
 
                 return Ok();
             }
