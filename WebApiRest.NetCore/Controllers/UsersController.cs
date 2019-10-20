@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using WebApiRest.NetCore.Domain.Interfaces.Bussiness;
 using WebApiRest.NetCore.Domain.Models;
 using WebApiRest.NetCore.Filters;
-using WebApiRest.NetCore.Tools;
 
 namespace WebApiRest.NetCore.Controllers
 {
@@ -125,15 +124,14 @@ namespace WebApiRest.NetCore.Controllers
 
                 var roleModel = await this._BussinessRole.Read(userModel.IdRole);
 
-                var token = Methods.GetJWT(
-                              this._Configuration.GetSection("AppSettings:SecurityKey").Value,
-                              new TimeSpan(
-                                  0, 
-                                  0, 
-                                  this._Configuration.GetValue<int>("AppSettings:DurationTokenJwt"), 
-                                  0
-                              )
-                            );
+                var token = this._Configuration.GetSection("AppSettings:SecurityKey").Value.ExtGetJwt(
+                                new TimeSpan(
+                                    0,
+                                    0,
+                                    this._Configuration.GetValue<int>("AppSettings:DurationTokenJwt"),
+                                    0
+                                )
+                              );
 
                 // Set id user.
                 token.User = new UserRoleModel

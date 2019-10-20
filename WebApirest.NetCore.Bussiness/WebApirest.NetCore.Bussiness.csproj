@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WebApiRest.NetCore.Tools\WebApiRest.NetCore.Tools.csproj" />
+    <ProjectReference Include="..\WebApiRest.NetCore.Repositories\WebApiRest.NetCore.Repositories.csproj" />
   </ItemGroup>
 
 </Project>

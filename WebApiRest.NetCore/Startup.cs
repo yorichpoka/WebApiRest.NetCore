@@ -16,7 +16,6 @@ using WebApiRest.NetCore.Domain.Interfaces.Repositories;
 using WebApiRest.NetCore.Domain.Models;
 using WebApiRest.NetCore.Filters;
 using WebApiRest.NetCore.Repositories.Contexts;
-using WebApiRest.NetCore.Tools;
 
 namespace WebApiRest.NetCore
 {
@@ -88,9 +87,7 @@ namespace WebApiRest.NetCore
                       // Setup validate data
                       ValidIssuer = "projects.in",
                       ValidAudience = "readers",
-                      IssuerSigningKey = Methods.GetSymmetricSecurityKey(
-                                            this._Configuration.GetSection("AppSettings:SecurityKey").Value
-                                         )
+                      IssuerSigningKey = this._Configuration.GetSection("AppSettings:SecurityKey").Value.ExtGetSymmetricSecurityKey()
                   };
               });
 
