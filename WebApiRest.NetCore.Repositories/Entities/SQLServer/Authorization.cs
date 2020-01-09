@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace WebApiRest.NetCore.Repositories.Entities.SQLServer
+namespace WebApiRest.NetCore.Repositories.Entities.SqlServer
 {
-    public partial class Authorization
+    public class Authorization
     {
         public int IdRole { get; set; }
         public int IdMenu { get; set; }
@@ -12,7 +12,7 @@ namespace WebApiRest.NetCore.Repositories.Entities.SQLServer
         public bool Delete { get; set; }
         public DateTime CreationDate { get; set; }
 
-        public virtual Menu IdMenuNavigation { get; set; }
-        public virtual Role IdRoleNavigation { get; set; }
+        public virtual Menu Menu { get; set; }
+        public virtual Role Role { get; set; }
     }
 }

@@ -4,7 +4,7 @@ using WebApiRest.NetCore.Domain.Interfaces.Bussiness;
 using WebApiRest.NetCore.Domain.Interfaces.Repositories;
 using WebApiRest.NetCore.Domain.Models;
 
-namespace WebApirest.NetCore.Bussiness.MySQL
+namespace WebApiRest.NetCore.Bussiness.MySql
 {
     public class MenuBussinessImpl : IMenuBussiness
     {
@@ -25,6 +25,12 @@ namespace WebApirest.NetCore.Bussiness.MySQL
         {
             return
                 this._MenuRepository.Delete(id);
+        }
+
+        public Task Delete(int[] ids)
+        {
+            return
+                this._MenuRepository.Delete(ids);
         }
 
         public Task<MenuModel> Read(int id)

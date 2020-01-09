@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApiRest.NetCore.Domain.Interfaces.Repositories;
 using WebApiRest.NetCore.Domain.Models;
-using WebApiRest.NetCore.Repositories;
 using WebApiRest.NetCore.Repositories.Contexts;
-using WebApiRest.NetCore.Repositories.Entities.SQLServer;
+using SqlServerPkg = WebApiRest.NetCore.Repositories.Entities.SqlServer;
 
-namespace WebApirest.NetCore.Repositories.SQLServer
+namespace WebApiRest.NetCore.Repositories.Repositories.SqlServer
 {
     public class RoleRepositoryImpl : IRoleRepository
     {
@@ -26,13 +26,13 @@ namespace WebApirest.NetCore.Repositories.SQLServer
             return
                 Task.Factory.StartNew<RoleModel>(() =>
                 {
-                    var value = this._Mapper.Map<RoleModel, Role>(obj);
+                    var value = this._Mapper.Map<RoleModel, SqlServerPkg.Role>(obj);
 
                     this._DataBaseSQLServerContext.Roles.Add(value);
 
                     this._DataBaseSQLServerContext.SaveChanges();
 
-                    return this._Mapper.Map<Role, RoleModel>(value);
+                    return this._Mapper.Map<SqlServerPkg.Role, RoleModel>(value);
                 });
         }
 
@@ -49,14 +49,28 @@ namespace WebApirest.NetCore.Repositories.SQLServer
                 });
         }
 
+        public Task Delete(int[] ids)
+        {
+            return
+                Task.Factory.StartNew(() =>
+                {
+                    this._DataBaseSQLServerContext.Roles.RemoveRange(
+                        this._DataBaseSQLServerContext.Roles.Where(l => ids.Contains(l.Id))
+                    );
+
+                    this._DataBaseSQLServerContext.SaveChanges();
+                });
+        }
+
         public Task<RoleModel> Read(int id)
         {
             return
                 Task.Factory.StartNew<RoleModel>(() =>
                 {
-                    var value = this._DataBaseSQLServerContext.Roles.FindAsync(id);
+                    var value = this._DataBaseSQLServerContext.Roles.Include(l => l.Users)
+                                                                    .FirstOrDefault(l => l.Id == id);
 
-                    return this._Mapper.Map<Role, RoleModel>(value.Result);
+                    return this._Mapper.Map<SqlServerPkg.Role, RoleModel>(value);
                 });
         }
 
@@ -65,9 +79,10 @@ namespace WebApirest.NetCore.Repositories.SQLServer
             return
                 Task.Factory.StartNew<IEnumerable<RoleModel>>(() =>
                 {
-                    var value = this._DataBaseSQLServerContext.Roles.ToList();
+                    var value = this._DataBaseSQLServerContext.Roles.Include(l => l.Users)
+                                                                    .ToList();
 
-                    return this._Mapper.Map<IEnumerable<Role>, IEnumerable<RoleModel>>(value);
+                    return this._Mapper.Map<IEnumerable<SqlServerPkg.Role>, IEnumerable<RoleModel>>(value);
                 });
         }
 

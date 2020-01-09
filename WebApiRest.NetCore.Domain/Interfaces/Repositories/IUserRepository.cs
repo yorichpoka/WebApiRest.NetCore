@@ -16,8 +16,10 @@ namespace WebApiRest.NetCore.Domain.Interfaces.Repositories
 
         Task<IEnumerable<UserRoleModel>> ReadWithRoles();
 
-        Task Update(UserModel obj);
+        Task<UserModel> Update(UserModel obj);
 
         Task Delete(int id);
+
+        Task Delete(int[] ids);
     }
 }

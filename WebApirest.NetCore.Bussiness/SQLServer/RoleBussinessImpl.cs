@@ -4,7 +4,7 @@ using WebApiRest.NetCore.Domain.Interfaces.Bussiness;
 using WebApiRest.NetCore.Domain.Interfaces.Repositories;
 using WebApiRest.NetCore.Domain.Models;
 
-namespace WebApirest.NetCore.Bussiness.SQLServer
+namespace WebApiRest.NetCore.Bussiness.SqlServer
 {
     public class RoleBussinessImpl : IRoleBussiness
     {
@@ -25,6 +25,12 @@ namespace WebApirest.NetCore.Bussiness.SQLServer
         {
             return
                 this._RoleRepository.Delete(id);
+        }
+
+        public Task Delete(int[] ids)
+        {
+            return
+                this._RoleRepository.Delete(ids);
         }
 
         public Task<RoleModel> Read(int id)

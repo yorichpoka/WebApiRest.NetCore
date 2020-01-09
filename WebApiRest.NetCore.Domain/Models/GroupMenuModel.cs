@@ -1,7 +1,8 @@
 ﻿namespace WebApiRest.NetCore.Domain.Models
 {
-    public class GroupMenuModel : Model
+    public class GroupMenuModel : ClassBaseModel
     {
         public string Title { get; set; }
+        public int[] IdMenus { get; set; }
     }
 }

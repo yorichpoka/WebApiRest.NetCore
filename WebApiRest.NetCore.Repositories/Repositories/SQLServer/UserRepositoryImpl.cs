@@ -5,11 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApiRest.NetCore.Domain.Interfaces.Repositories;
 using WebApiRest.NetCore.Domain.Models;
-using WebApiRest.NetCore.Repositories;
 using WebApiRest.NetCore.Repositories.Contexts;
-using WebApiRest.NetCore.Repositories.Entities.SQLServer;
+using SqlServerPkg = WebApiRest.NetCore.Repositories.Entities.SqlServer;
 
-namespace WebApirest.NetCore.Repositories.SQLServer
+namespace WebApiRest.NetCore.Repositories.Repositories.SqlServer
 {
     public class UserRepositoryImpl : IUserRepository
     {
@@ -27,13 +26,13 @@ namespace WebApirest.NetCore.Repositories.SQLServer
             return
                 Task.Factory.StartNew<UserModel>(() =>
                 {
-                    var value = this._Mapper.Map<UserModel, User>(obj);
+                    var value = this._Mapper.Map<UserModel, SqlServerPkg.User>(obj);
 
                     this._DataBaseSQLServerContext.Users.Add(value);
 
                     this._DataBaseSQLServerContext.SaveChanges();
 
-                    return this._Mapper.Map<User, UserModel>(value);
+                    return this._Mapper.Map<SqlServerPkg.User, UserModel>(value);
                 });
         }
 
@@ -50,6 +49,19 @@ namespace WebApirest.NetCore.Repositories.SQLServer
                 });
         }
 
+        public Task Delete(int[] ids)
+        {
+            return
+                Task.Factory.StartNew(() =>
+                {
+                    this._DataBaseSQLServerContext.Users.RemoveRange(
+                        this._DataBaseSQLServerContext.Users.Where(l => ids.Contains(l.Id))
+                    );
+
+                    this._DataBaseSQLServerContext.SaveChanges();
+                });
+        }
+
         public Task<UserModel> Read(int id)
         {
             return
@@ -57,7 +69,7 @@ namespace WebApirest.NetCore.Repositories.SQLServer
                 {
                     var value = this._DataBaseSQLServerContext.Users.FindAsync(id);
 
-                    return this._Mapper.Map<User, UserModel>(value.Result);
+                    return this._Mapper.Map<SqlServerPkg.User, UserModel>(value.Result);
                 });
         }
 
@@ -68,7 +80,7 @@ namespace WebApirest.NetCore.Repositories.SQLServer
                 {
                     var value = this._DataBaseSQLServerContext.Users.FirstOrDefaultAsync(l => l.Login == login && l.Password == password);
 
-                    return this._Mapper.Map<User, UserModel>(value.Result);
+                    return this._Mapper.Map<SqlServerPkg.User, UserModel>(value.Result);
                 });
         }
 
@@ -79,7 +91,7 @@ namespace WebApirest.NetCore.Repositories.SQLServer
                 {
                     var value = this._DataBaseSQLServerContext.Users.ToList();
 
-                    return this._Mapper.Map<IEnumerable<User>, IEnumerable<UserModel>>(value);
+                    return this._Mapper.Map<IEnumerable<SqlServerPkg.User>, IEnumerable<UserModel>>(value);
                 });
         }
 
@@ -90,11 +102,11 @@ namespace WebApirest.NetCore.Repositories.SQLServer
                 {
                     var value = this._DataBaseSQLServerContext.Users.Include(l => l.Role).ToList();
 
-                    return this._Mapper.Map<IEnumerable<User>, IEnumerable<UserRoleModel>>(value);
+                    return this._Mapper.Map<IEnumerable<SqlServerPkg.User>, IEnumerable<UserRoleModel>>(value);
                 });
         }
 
-        public Task Update(UserModel obj)
+        public Task<UserModel> Update(UserModel obj)
         {
             return
                 Task.Factory.StartNew(() =>
@@ -106,6 +118,8 @@ namespace WebApirest.NetCore.Repositories.SQLServer
                     this._DataBaseSQLServerContext.Users.Update(value);
 
                     this._DataBaseSQLServerContext.SaveChanges();
+
+                    return this._Mapper.Map<SqlServerPkg.User, UserModel>(value);
                 });
         }
     }

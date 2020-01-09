@@ -15,5 +15,7 @@ namespace WebApiRest.NetCore.Domain.Interfaces.Repositories
         Task Update(RoleModel obj);
 
         Task Delete(int id);
+
+        Task Delete(int[] ids);
     }
 }

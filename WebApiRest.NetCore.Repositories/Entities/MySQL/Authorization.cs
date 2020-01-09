@@ -1,8 +1,9 @@
 ﻿using System;
+using Package = WebApiRest.NetCore.Repositories.Entities.MySql;
 
-namespace WebApiRest.NetCore.Repositories.Entities.MySQL
+namespace WebApiRest.NetCore.Repositories.Entities.MySql
 {
-    public class TblAuthorization
+    public class Authorization
     {
         public int IdRole { get; set; }
         public int IdMenu { get; set; }
@@ -12,7 +13,11 @@ namespace WebApiRest.NetCore.Repositories.Entities.MySQL
         public bool Delete { get; set; }
         public DateTime CreationDate { get; set; }
 
-        public virtual TblMenu Menu { get; set; }
-        public virtual TblRole Role { get; set; }
+        public virtual Package.Menu Menu { get; set; }
+        public virtual Package.Role Role { get; set; }
+
+        public Authorization()
+        {
+        }
     }
 }

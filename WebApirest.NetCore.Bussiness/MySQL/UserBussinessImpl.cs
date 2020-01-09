@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebApiRest.NetCore.Domain.Interfaces.Bussiness;
 using WebApiRest.NetCore.Domain.Interfaces.Repositories;
 using WebApiRest.NetCore.Domain.Models;
 
-namespace WebApirest.NetCore.Bussiness.MySQL
+namespace WebApiRest.NetCore.Bussiness.MySql
 {
-    public class UserBussinessImpl : IUserBussiness
+    public class UserBussinessImpl : UserHubBussiness, IUserBussiness
     {
         private readonly IUserRepository _UserRepository;
 
@@ -25,6 +26,12 @@ namespace WebApirest.NetCore.Bussiness.MySQL
         {
             return
                 this._UserRepository.Delete(id);
+        }
+
+        public Task Delete(int[] ids)
+        {
+            return
+                this._UserRepository.Delete(ids);
         }
 
         public Task<UserModel> Read(int id)
@@ -51,7 +58,7 @@ namespace WebApirest.NetCore.Bussiness.MySQL
                 this._UserRepository.ReadWithRoles();
         }
 
-        public Task Update(UserModel obj)
+        public Task<UserModel> Update(UserModel obj)
         {
             return
                 this._UserRepository.Update(obj);

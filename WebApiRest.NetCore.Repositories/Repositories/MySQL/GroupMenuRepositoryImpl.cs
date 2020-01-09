@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using WebApiRest.NetCore.Domain.Interfaces.Repositories;
 using WebApiRest.NetCore.Domain.Models;
 using WebApiRest.NetCore.Repositories.Contexts;
-using WebApiRest.NetCore.Repositories.Entities.MySQL;
+using MySqlPkg = WebApiRest.NetCore.Repositories.Entities.MySql;
 
-namespace WebApiRest.NetCore.Repositories.MySQL
+namespace WebApiRest.NetCore.Repositories.Repositories.MySql
 {
     public class GroupMenuRepositoryImpl : IGroupMenuRepository
     {
@@ -25,13 +25,13 @@ namespace WebApiRest.NetCore.Repositories.MySQL
             return
                 Task.Factory.StartNew<GroupMenuModel>(() =>
                 {
-                    var value = this._Mapper.Map<GroupMenuModel, TblGroupMenu>(obj);
+                    var value = this._Mapper.Map<GroupMenuModel, MySqlPkg.GroupMenu>(obj);
 
                     this._DataBaseMySQLContext.GroupMenus.Add(value);
 
                     this._DataBaseMySQLContext.SaveChanges();
 
-                    return this._Mapper.Map<TblGroupMenu, GroupMenuModel>(value);
+                    return this._Mapper.Map<MySqlPkg.GroupMenu, GroupMenuModel>(value);
                 });
         }
 
@@ -48,6 +48,19 @@ namespace WebApiRest.NetCore.Repositories.MySQL
                 });
         }
 
+        public Task Delete(int[] ids)
+        {
+            return
+                Task.Factory.StartNew(() =>
+                {
+                    this._DataBaseMySQLContext.GroupMenus.RemoveRange(
+                        this._DataBaseMySQLContext.GroupMenus.Where(l => ids.Contains(l.Id))
+                    );
+
+                    this._DataBaseMySQLContext.SaveChanges();
+                });
+        }
+
         public Task<GroupMenuModel> Read(int id)
         {
             return
@@ -55,7 +68,7 @@ namespace WebApiRest.NetCore.Repositories.MySQL
                 {
                     var value = this._DataBaseMySQLContext.GroupMenus.FindAsync(id);
 
-                    return this._Mapper.Map<TblGroupMenu, GroupMenuModel>(value.Result);
+                    return this._Mapper.Map<MySqlPkg.GroupMenu, GroupMenuModel>(value.Result);
                 });
         }
 
@@ -66,7 +79,7 @@ namespace WebApiRest.NetCore.Repositories.MySQL
                 {
                     var value = this._DataBaseMySQLContext.GroupMenus.ToList();
 
-                    return this._Mapper.Map<IEnumerable<TblGroupMenu>, IEnumerable<GroupMenuModel>>(value);
+                    return this._Mapper.Map<IEnumerable<MySqlPkg.GroupMenu>, IEnumerable<GroupMenuModel>>(value);
                 });
         }
 

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using WebApiRest.NetCore.Domain.Interfaces.Repositories;
 using WebApiRest.NetCore.Domain.Models;
 using WebApiRest.NetCore.Repositories.Contexts;
-using WebApiRest.NetCore.Repositories.Entities.MySQL;
+using MySqlPkg = WebApiRest.NetCore.Repositories.Entities.MySql;
 
-namespace WebApiRest.NetCore.Repositories.MySQL
+namespace WebApiRest.NetCore.Repositories.Repositories.MySql
 {
     public class AuthorizationRepositoryImpl : IAuthorizationRepository
     {
@@ -26,13 +26,13 @@ namespace WebApiRest.NetCore.Repositories.MySQL
             return
                 Task.Factory.StartNew<AuthorizationModel>(() =>
                 {
-                    var value = this._Mapper.Map<AuthorizationModel, TblAuthorization>(obj);
+                    var value = this._Mapper.Map<AuthorizationModel, MySqlPkg.Authorization>(obj);
 
                     this._DataBaseMySQLContext.Authorizations.Add(value);
 
                     this._DataBaseMySQLContext.SaveChanges();
 
-                    return this._Mapper.Map<TblAuthorization, AuthorizationModel>(value);
+                    return this._Mapper.Map<MySqlPkg.Authorization, AuthorizationModel>(value);
                 });
         }
 
@@ -49,6 +49,19 @@ namespace WebApiRest.NetCore.Repositories.MySQL
                 });
         }
 
+        public Task Delete(int[][] ids)
+        {
+            return
+                Task.Factory.StartNew(() =>
+                {
+                    this._DataBaseMySQLContext.Authorizations.RemoveRange(
+                        this._DataBaseMySQLContext.Authorizations.Where(l => ids.Count(ll => ll[0] == l.IdRole && ll[1] == l.IdMenu) != 0)
+                    );
+
+                    this._DataBaseMySQLContext.SaveChanges();
+                });
+        }
+
         public Task<AuthorizationModel> Read(int idRole, int idMenu)
         {
             return
@@ -56,7 +69,7 @@ namespace WebApiRest.NetCore.Repositories.MySQL
                 {
                     var value = this._DataBaseMySQLContext.Authorizations.FirstOrDefaultAsync(l => l.IdRole == idRole && l.IdMenu == idMenu);
 
-                    return this._Mapper.Map<TblAuthorization, AuthorizationModel>(value.Result);
+                    return this._Mapper.Map<MySqlPkg.Authorization, AuthorizationModel>(value.Result);
                 });
         }
 
@@ -67,7 +80,7 @@ namespace WebApiRest.NetCore.Repositories.MySQL
                 {
                     var value = this._DataBaseMySQLContext.Authorizations.ToList();
 
-                    return this._Mapper.Map<IEnumerable<TblAuthorization>, IEnumerable<AuthorizationModel>>(value);
+                    return this._Mapper.Map<IEnumerable<MySqlPkg.Authorization>, IEnumerable<AuthorizationModel>>(value);
                 });
         }
 

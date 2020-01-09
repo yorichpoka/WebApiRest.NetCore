@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebApiRest.NetCore.Repositories.Entities.SQLServer;
+using WebApiRest.NetCore.Repositories.Entities.SqlServer;
 
 namespace WebApiRest.NetCore.Repositories.Contexts
 {
@@ -31,14 +31,14 @@ namespace WebApiRest.NetCore.Repositories.Contexts
 
                 entity.Property(e => e.CreationDate).HasColumnType("smalldatetime");
 
-                entity.HasOne(d => d.IdMenuNavigation)
-                    .WithMany(p => p.Authorization)
+                entity.HasOne(d => d.Menu)
+                    .WithMany(p => p.Authorizations)
                     .HasForeignKey(d => d.IdMenu)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Authorization_Menu");
 
-                entity.HasOne(d => d.IdRoleNavigation)
-                    .WithMany(p => p.Authorization)
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.Authorizations)
                     .HasForeignKey(d => d.IdRole)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Authorization_Role");
@@ -65,8 +65,8 @@ namespace WebApiRest.NetCore.Repositories.Contexts
                     .IsRequired()
                     .HasMaxLength(50);
 
-                entity.HasOne(d => d.IdGroupMenuNavigation)
-                    .WithMany(p => p.Menu)
+                entity.HasOne(d => d.GroupMenu)
+                    .WithMany(p => p.Menus)
                     .HasForeignKey(d => d.IdGroupMenu)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Menu_GroupMenu");
@@ -102,7 +102,7 @@ namespace WebApiRest.NetCore.Repositories.Contexts
                     .HasMaxLength(50);
 
                 entity.HasOne(d => d.Role)
-                    .WithMany(p => p.User)
+                    .WithMany(p => p.Users)
                     .HasForeignKey(d => d.IdRole)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_User_Role");

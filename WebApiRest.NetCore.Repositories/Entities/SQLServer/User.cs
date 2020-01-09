@@ -1,6 +1,6 @@
-﻿namespace WebApiRest.NetCore.Repositories.Entities.SQLServer
+﻿namespace WebApiRest.NetCore.Repositories.Entities.SqlServer
 {
-    public partial class User
+    public class User
     {
         public int Id { get; set; }
         public int IdRole { get; set; }

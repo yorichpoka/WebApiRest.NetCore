@@ -4,11 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApiRest.NetCore.Domain.Interfaces.Repositories;
 using WebApiRest.NetCore.Domain.Models;
-using WebApiRest.NetCore.Repositories;
 using WebApiRest.NetCore.Repositories.Contexts;
-using WebApiRest.NetCore.Repositories.Entities.SQLServer;
+using SqlServerPkg = WebApiRest.NetCore.Repositories.Entities.SqlServer;
 
-namespace WebApirest.NetCore.Repositories.SQLServer
+namespace WebApiRest.NetCore.Repositories.Repositories.SqlServer
 {
     public class MenuRepositoryImpl : IMenuRepository
     {
@@ -26,13 +25,13 @@ namespace WebApirest.NetCore.Repositories.SQLServer
             return
                 Task.Factory.StartNew<MenuModel>(() =>
                 {
-                    var value = this._Mapper.Map<MenuModel, Menu>(obj);
+                    var value = this._Mapper.Map<MenuModel, SqlServerPkg.Menu>(obj);
 
                     this._DataBaseSQLServerContext.Menus.Add(value);
 
                     this._DataBaseSQLServerContext.SaveChanges();
 
-                    return this._Mapper.Map<Menu, MenuModel>(value);
+                    return this._Mapper.Map<SqlServerPkg.Menu, MenuModel>(value);
                 });
         }
 
@@ -49,6 +48,19 @@ namespace WebApirest.NetCore.Repositories.SQLServer
                 });
         }
 
+        public Task Delete(int[] ids)
+        {
+            return
+                Task.Factory.StartNew(() =>
+                {
+                    this._DataBaseSQLServerContext.Menus.RemoveRange(
+                        this._DataBaseSQLServerContext.Menus.Where(l => ids.Contains(l.Id))
+                    );
+
+                    this._DataBaseSQLServerContext.SaveChanges();
+                });
+        }
+
         public Task<MenuModel> Read(int id)
         {
             return
@@ -56,7 +68,7 @@ namespace WebApirest.NetCore.Repositories.SQLServer
                 {
                     var value = this._DataBaseSQLServerContext.Menus.FindAsync(id);
 
-                    return this._Mapper.Map<Menu, MenuModel>(value.Result);
+                    return this._Mapper.Map<SqlServerPkg.Menu, MenuModel>(value.Result);
                 });
         }
 
@@ -67,7 +79,7 @@ namespace WebApirest.NetCore.Repositories.SQLServer
                 {
                     var value = this._DataBaseSQLServerContext.Menus.ToList();
 
-                    return this._Mapper.Map<IEnumerable<Menu>, IEnumerable<MenuModel>>(value);
+                    return this._Mapper.Map<IEnumerable<SqlServerPkg.Menu>, IEnumerable<MenuModel>>(value);
                 });
         }
 

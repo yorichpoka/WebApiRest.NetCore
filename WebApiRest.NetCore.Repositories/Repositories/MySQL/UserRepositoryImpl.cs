@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using WebApiRest.NetCore.Domain.Interfaces.Repositories;
 using WebApiRest.NetCore.Domain.Models;
 using WebApiRest.NetCore.Repositories.Contexts;
-using WebApiRest.NetCore.Repositories.Entities.MySQL;
+using MySqlPkg = WebApiRest.NetCore.Repositories.Entities.MySql;
 
-namespace WebApiRest.NetCore.Repositories.MySQL
+namespace WebApiRest.NetCore.Repositories.Repositories.MySql
 {
     public class UserRepositoryImpl : IUserRepository
     {
@@ -26,13 +26,13 @@ namespace WebApiRest.NetCore.Repositories.MySQL
             return
                 Task.Factory.StartNew<UserModel>(() =>
                 {
-                    var value = this._Mapper.Map<UserModel, TblUser>(obj);
+                    var value = this._Mapper.Map<UserModel, MySqlPkg.User>(obj);
 
                     this._DataBaseMySQLContext.Users.Add(value);
 
                     this._DataBaseMySQLContext.SaveChanges();
 
-                    return this._Mapper.Map<TblUser, UserModel>(value);
+                    return this._Mapper.Map<MySqlPkg.User, UserModel>(value);
                 });
         }
 
@@ -49,6 +49,19 @@ namespace WebApiRest.NetCore.Repositories.MySQL
                 });
         }
 
+        public Task Delete(int[] ids)
+        {
+            return
+                Task.Factory.StartNew(() =>
+                {
+                    this._DataBaseMySQLContext.Users.RemoveRange(
+                        this._DataBaseMySQLContext.Users.Where(l => ids.Contains(l.Id))
+                    );
+
+                    this._DataBaseMySQLContext.SaveChanges();
+                });
+        }
+
         public Task<UserModel> Read(int id)
         {
             return
@@ -56,7 +69,7 @@ namespace WebApiRest.NetCore.Repositories.MySQL
                 {
                     var value = this._DataBaseMySQLContext.Users.FindAsync(id);
 
-                    return this._Mapper.Map<TblUser, UserModel>(value.Result);
+                    return this._Mapper.Map<MySqlPkg.User, UserModel>(value.Result);
                 });
         }
 
@@ -67,7 +80,7 @@ namespace WebApiRest.NetCore.Repositories.MySQL
                 {
                     var value = this._DataBaseMySQLContext.Users.FirstOrDefaultAsync(l => l.Login == login && l.Password == password);
 
-                    return this._Mapper.Map<TblUser, UserModel>(value.Result);
+                    return this._Mapper.Map<MySqlPkg.User, UserModel>(value.Result);
                 });
         }
 
@@ -78,7 +91,7 @@ namespace WebApiRest.NetCore.Repositories.MySQL
                 {
                     var value = this._DataBaseMySQLContext.Users.ToList();
 
-                    return this._Mapper.Map<IEnumerable<TblUser>, IEnumerable<UserModel>>(value);
+                    return this._Mapper.Map<IEnumerable<MySqlPkg.User>, IEnumerable<UserModel>>(value);
                 });
         }
 
@@ -89,11 +102,11 @@ namespace WebApiRest.NetCore.Repositories.MySQL
                 {
                     var value = this._DataBaseMySQLContext.Users.Include(l => l.Role).ToList();
 
-                    return this._Mapper.Map<IEnumerable<TblUser>, IEnumerable<UserRoleModel>>(value);
+                    return this._Mapper.Map<IEnumerable<MySqlPkg.User>, IEnumerable<UserRoleModel>>(value);
                 });
         }
 
-        public Task Update(UserModel obj)
+        public Task<UserModel> Update(UserModel obj)
         {
             return
                 Task.Factory.StartNew(() =>
@@ -105,6 +118,8 @@ namespace WebApiRest.NetCore.Repositories.MySQL
                     this._DataBaseMySQLContext.Users.Update(value);
 
                     this._DataBaseMySQLContext.SaveChanges();
+
+                    return this._Mapper.Map<MySqlPkg.User, UserModel>(value);
                 });
         }
     }

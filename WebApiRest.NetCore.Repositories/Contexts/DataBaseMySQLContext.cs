@@ -1,15 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebApiRest.NetCore.Repositories.Entities.MySQL;
+using MySqlPkg = WebApiRest.NetCore.Repositories.Entities.MySql;
 
 namespace WebApiRest.NetCore.Repositories.Contexts
 {
     public class DataBaseMySQLContext : DbContext
     {
-        public virtual DbSet<TblAuthorization> Authorizations { get; set; }
-        public virtual DbSet<TblGroupMenu> GroupMenus { get; set; }
-        public virtual DbSet<TblMenu> Menus { get; set; }
-        public virtual DbSet<TblRole> Roles { get; set; }
-        public virtual DbSet<TblUser> Users { get; set; }
+        public virtual DbSet<MySqlPkg.Authorization> Authorizations { get; set; }
+        public virtual DbSet<MySqlPkg.GroupMenu> GroupMenus { get; set; }
+        public virtual DbSet<MySqlPkg.Menu> Menus { get; set; }
+        public virtual DbSet<MySqlPkg.Role> Roles { get; set; }
+        public virtual DbSet<MySqlPkg.User> Users { get; set; }
 
         public DataBaseMySQLContext()
         {
@@ -23,7 +23,7 @@ namespace WebApiRest.NetCore.Repositories.Contexts
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<TblAuthorization>(entity =>
+            modelBuilder.Entity<MySqlPkg.Authorization>(entity =>
             {
                 entity.HasKey(e => new { e.IdMenu, e.IdRole });
 
@@ -32,19 +32,19 @@ namespace WebApiRest.NetCore.Repositories.Contexts
                 entity.Property(e => e.CreationDate).HasColumnType("DATETIME");
 
                 entity.HasOne(d => d.Menu)
-                    .WithMany(p => p.C_Authorization)
+                    .WithMany(p => p.Authorizations)
                     .HasForeignKey(d => d.IdMenu)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Authorization_Menu");
 
                 entity.HasOne(d => d.Role)
-                    .WithMany(p => p.C_Authorization)
+                    .WithMany(p => p.Authorizations)
                     .HasForeignKey(d => d.IdRole)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Authorization_Role");
             });
 
-            modelBuilder.Entity<TblGroupMenu>(entity =>
+            modelBuilder.Entity<MySqlPkg.GroupMenu>(entity =>
             {
                 entity.HasKey(e => new { e.Id });
 
@@ -55,7 +55,7 @@ namespace WebApiRest.NetCore.Repositories.Contexts
                     .HasMaxLength(150);
             });
 
-            modelBuilder.Entity<TblMenu>(entity =>
+            modelBuilder.Entity<MySqlPkg.Menu>(entity =>
             {
                 entity.HasKey(e => new { e.Id });
 
@@ -72,7 +72,7 @@ namespace WebApiRest.NetCore.Repositories.Contexts
                     .HasConstraintName("FK_Menu_GroupMenu");
             });
 
-            modelBuilder.Entity<TblRole>(entity =>
+            modelBuilder.Entity<MySqlPkg.Role>(entity =>
             {
                 entity.HasKey(e => new { e.Id });
 
@@ -83,7 +83,7 @@ namespace WebApiRest.NetCore.Repositories.Contexts
                     .HasMaxLength(150);
             });
 
-            modelBuilder.Entity<TblUser>(entity =>
+            modelBuilder.Entity<MySqlPkg.User>(entity =>
             {
                 entity.HasKey(e => new { e.Id });
 

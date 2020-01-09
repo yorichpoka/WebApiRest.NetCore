@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApiRest.NetCore.Domain.Interfaces.Repositories;
 using WebApiRest.NetCore.Domain.Models;
-using WebApiRest.NetCore.Repositories;
 using WebApiRest.NetCore.Repositories.Contexts;
-using WebApiRest.NetCore.Repositories.Entities.SQLServer;
+using SqlServerPkg = WebApiRest.NetCore.Repositories.Entities.SqlServer;
 
-namespace WebApirest.NetCore.Repositories.SQLServer
+namespace WebApiRest.NetCore.Repositories.Repositories.SqlServer
 {
     public class GroupMenuRepositoryImpl : IGroupMenuRepository
     {
@@ -26,13 +26,13 @@ namespace WebApirest.NetCore.Repositories.SQLServer
             return
                 Task.Factory.StartNew<GroupMenuModel>(() =>
                 {
-                    var value = this._Mapper.Map<GroupMenuModel, GroupMenu>(obj);
+                    var value = this._Mapper.Map<GroupMenuModel, SqlServerPkg.GroupMenu>(obj);
 
                     this._DataBaseSQLServerContext.GroupMenus.Add(value);
 
                     this._DataBaseSQLServerContext.SaveChanges();
 
-                    return this._Mapper.Map<GroupMenu, GroupMenuModel>(value);
+                    return this._Mapper.Map<SqlServerPkg.GroupMenu, GroupMenuModel>(value);
                 });
         }
 
@@ -49,14 +49,28 @@ namespace WebApirest.NetCore.Repositories.SQLServer
                 });
         }
 
+        public Task Delete(int[] ids)
+        {
+            return
+                Task.Factory.StartNew(() =>
+                {
+                    this._DataBaseSQLServerContext.GroupMenus.RemoveRange(
+                        this._DataBaseSQLServerContext.GroupMenus.Where(l => ids.Contains(l.Id))
+                    );
+
+                    this._DataBaseSQLServerContext.SaveChanges();
+                });
+        }
+
         public Task<GroupMenuModel> Read(int id)
         {
             return
                 Task.Factory.StartNew<GroupMenuModel>(() =>
                 {
-                    var value = this._DataBaseSQLServerContext.GroupMenus.FindAsync(id);
+                    var value = this._DataBaseSQLServerContext.GroupMenus.Include(l => l.Menus)
+                                                                         .FirstOrDefault(l => l.Id == id);
 
-                    return this._Mapper.Map<GroupMenu, GroupMenuModel>(value.Result);
+                    return this._Mapper.Map<SqlServerPkg.GroupMenu, GroupMenuModel>(value);
                 });
         }
 
@@ -65,9 +79,10 @@ namespace WebApirest.NetCore.Repositories.SQLServer
             return
                 Task.Factory.StartNew<IEnumerable<GroupMenuModel>>(() =>
                 {
-                    var value = this._DataBaseSQLServerContext.GroupMenus.ToList();
+                    var value = this._DataBaseSQLServerContext.GroupMenus.Include(l => l.Menus)
+                                                                         .ToList();
 
-                    return this._Mapper.Map<IEnumerable<GroupMenu>, IEnumerable<GroupMenuModel>>(value);
+                    return this._Mapper.Map<IEnumerable<SqlServerPkg.GroupMenu>, IEnumerable<GroupMenuModel>>(value);
                 });
         }
 

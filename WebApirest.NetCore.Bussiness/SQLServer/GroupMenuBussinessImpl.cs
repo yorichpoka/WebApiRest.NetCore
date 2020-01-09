@@ -4,7 +4,7 @@ using WebApiRest.NetCore.Domain.Interfaces.Bussiness;
 using WebApiRest.NetCore.Domain.Interfaces.Repositories;
 using WebApiRest.NetCore.Domain.Models;
 
-namespace WebApirest.NetCore.Bussiness.SQLServer
+namespace WebApiRest.NetCore.Bussiness.SqlServer
 {
     public class GroupMenuBussinessImpl : IGroupMenuBussiness
     {
@@ -25,6 +25,12 @@ namespace WebApirest.NetCore.Bussiness.SQLServer
         {
             return
                 this._GroupMenuRepository.Delete(id);
+        }
+
+        public Task Delete(int[] ids)
+        {
+            return
+                this._GroupMenuRepository.Delete(ids);
         }
 
         public Task<GroupMenuModel> Read(int id)

@@ -1,6 +1,6 @@
 ﻿namespace WebApiRest.NetCore.Domain.Models
 {
-    public class UserRoleModel : Model
+    public class UserRoleModel : ClassBaseModel
     {
         public int IdRole { get; set; }
         public RoleModel Role { get; set; }
