@@ -7,11 +7,17 @@ namespace WebApiRest.NetCore.Domain.Interfaces.Repositories.MongoDB
     public interface ICoordinateRepository
     {
         Task<CoordinateModel> Create(CoordinateModel obj);
+
         Task<CoordinateModel> Read(string grade_id);
+
         Task<IEnumerable<CoordinateModel>> Read(int top);
+
         Task<IEnumerable<CoordinateModel>> Read();
+
         Task Update(CoordinateModel obj);
+
         Task Delete(string grade_id);
+
         Task Delete(string[] grade_ids);
     }
 }

@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
+using System;
 
 namespace WebApiRest.NetCore.Service
 {
@@ -63,7 +60,7 @@ namespace WebApiRest.NetCore.Service
                             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                             .Enrich.FromLogContext()
                             .WriteTo.File(pathLogFile)
-                            .CreateLogger(); 
+                            .CreateLogger();
         }
     }
 }

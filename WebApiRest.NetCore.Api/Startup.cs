@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -15,7 +14,6 @@ using MongoDB.Driver;
 using Serilog;
 using Serilog.Events;
 using Swashbuckle.AspNetCore.Swagger;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using WebApiRest.NetCore.Api.Filters;
@@ -56,10 +54,12 @@ namespace WebApiRest.NetCore.Api
         {
             services
                 .Configure<CookiePolicyOptions>(
-                    options => {
-                        options.CheckConsentNeeded = (context) => {
-                                                        return true;
-                                                     };
+                    options =>
+                    {
+                        options.CheckConsentNeeded = (context) =>
+                        {
+                            return true;
+                        };
                         options.MinimumSameSitePolicy = SameSiteMode.None;
                     }
                 );
@@ -75,9 +75,11 @@ namespace WebApiRest.NetCore.Api
             // Config cors
             services
                 .AddCors(
-                    options => {
-                        options.AddPolicy("AllowAny", 
-                            l => {
+                    options =>
+                    {
+                        options.AddPolicy("AllowAny",
+                            l =>
+                            {
                                 l.AllowAnyHeader();
                                 l.AllowAnyMethod();
                                 l.AllowAnyOrigin();
@@ -202,7 +204,7 @@ namespace WebApiRest.NetCore.Api
 
             // Configure Jwt
             // this.ConfigureJwt(services);
-            
+
             // Configure identity server 4
             this.ConfigureIdentityServer4(services);
         }
@@ -236,7 +238,8 @@ namespace WebApiRest.NetCore.Api
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             // Custom error message.
-            app.UseStatusCodePages(async context => {
+            app.UseStatusCodePages(async context =>
+            {
                 context.HttpContext.Response.ContentType = "application/json";
 
                 context.HttpContext.Response.ExtAddVersionInHeaderResponse(
@@ -250,7 +253,8 @@ namespace WebApiRest.NetCore.Api
 
             // Enable middleware to serve generated Swagger as a JSON endpoint
             app.UseSwagger();
-            app.UseSwaggerUI(l => {
+            app.UseSwaggerUI(l =>
+            {
                 l.SwaggerEndpoint(
                     url: "../swagger/v1/swagger.json",
                     name: "WebApiRest.NetCore v1 " + env.EnvironmentName
@@ -260,7 +264,8 @@ namespace WebApiRest.NetCore.Api
             app.UseCors("AllowAny");
 
             // Config endpoind SignalR
-            app.UseSignalR(routes => {
+            app.UseSignalR(routes =>
+            {
                 routes.MapHub<UserHub>("/userHub");
                 routes.MapHub<RoleHub>("/roleHub");
                 routes.MapHub<MenuHub>("/menuHub");
@@ -272,7 +277,7 @@ namespace WebApiRest.NetCore.Api
 
             app.UseMvc();
         }
-        
+
         /// <summary>
         /// ...
         /// </summary>
@@ -288,9 +293,8 @@ namespace WebApiRest.NetCore.Api
                                     .FromLogContext()
                                         .WriteTo
                                         .File(pathLogFile)
-                                        .CreateLogger(); 
+                                        .CreateLogger();
 
-            
             Log.Information("Starting up of application.");
         }
 
@@ -298,18 +302,20 @@ namespace WebApiRest.NetCore.Api
         /// TODO
         /// </summary>
         /// <param name="service"></param>
-        private void ConfigureIdentityServer4(IServiceCollection services) 
+        private void ConfigureIdentityServer4(IServiceCollection services)
         {
-            var builder = 
+            var builder =
                 services
                     .AddAuthentication(
-                        options => {
+                        options =>
+                        {
                             SetAuthenticationOptions(options);
                         }
                     )
                     .AddCookie()
                     .AddOpenIdConnect(
-                        options => {
+                        options =>
+                        {
                             SetOpenIdConnectOptions(options);
                         }
                     );

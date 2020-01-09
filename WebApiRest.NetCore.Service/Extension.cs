@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace WebApiRest.NetCore.Service
+﻿namespace WebApiRest.NetCore.Service
 {
     public static class Extension
     {

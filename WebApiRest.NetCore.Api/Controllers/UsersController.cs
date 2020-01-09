@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -7,12 +8,11 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApiRest.NetCore.Api.Filters;
+using WebApiRest.NetCore.Domain;
 using WebApiRest.NetCore.Domain.Enums;
 using WebApiRest.NetCore.Domain.Hubs;
 using WebApiRest.NetCore.Domain.Interfaces.Bussiness;
 using WebApiRest.NetCore.Domain.Models;
-using WebApiRest.NetCore.Domain;
-using Microsoft.AspNetCore.Authentication;
 
 namespace WebApiRest.NetCore.Api.Controllers
 {
@@ -109,7 +109,7 @@ namespace WebApiRest.NetCore.Api.Controllers
 
                 // Emit hub
                 await this._hubContext.Clients.All.SendAsync(
-                    HubClientMethods.UserCreated.ToString(), 
+                    HubClientMethods.UserCreated.ToString(),
                     value
                 );
 
@@ -119,7 +119,7 @@ namespace WebApiRest.NetCore.Api.Controllers
             {
                 // Log
                 Log.Error(ex.ExtToString());
-                
+
                 switch (ex.InnerException)
                 {
                     case Exception exception:
@@ -177,7 +177,7 @@ namespace WebApiRest.NetCore.Api.Controllers
             {
                 // Log
                 Log.Error(ex.ExtToString());
-                
+
                 switch (ex.InnerException)
                 {
                     case Exception exception:
@@ -196,7 +196,8 @@ namespace WebApiRest.NetCore.Api.Controllers
         {
             return
                 Challenge(
-                    new AuthenticationProperties() {
+                    new AuthenticationProperties()
+                    {
                         RedirectUri = "api/users",
                     },
                     Microsoft.AspNetCore.Authentication.OpenIdConnect.OpenIdConnectDefaults.AuthenticationScheme
@@ -210,12 +211,13 @@ namespace WebApiRest.NetCore.Api.Controllers
         {
             var idToken = await Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.GetTokenAsync(HttpContext, "id_token");
             var access_token = await Microsoft.AspNetCore.Authentication.AuthenticationHttpContextExtensions.GetTokenAsync(HttpContext, "access_token");
-            var claims = HttpContext.User.Claims.Select(l => new {l.Type, l.Value})
+            var claims = HttpContext.User.Claims.Select(l => new { l.Type, l.Value })
                                                 .ToArray();
 
             return
                 Ok(
-                    new {
+                    new
+                    {
                         idToken,
                         access_token,
                         claims
@@ -235,26 +237,27 @@ namespace WebApiRest.NetCore.Api.Controllers
                 // Verify user connected
                 bool state = await this._Bussiness.RemoveHubConnectionId(null, id);
                 // Create object result
-                var result =    new { 
-                                    isExecuted = state, 
-                                    message = state ? "User disconnected."
+                var result = new
+                {
+                    isExecuted = state,
+                    message = state ? "User disconnected."
                                                     : "User not connected"
-                                };
+                };
                 // Emit hub to userd connected
                 if (!string.IsNullOrEmpty(hubConnectionId))
                     await this._hubContext.Clients.Client(hubConnectionId)
                                                   .SendAsync(
-                                                      HubClientMethods.UserDisconnected.ToString(), 
+                                                      HubClientMethods.UserDisconnected.ToString(),
                                                       result
                                                     );
 
-                return  Ok(result);
+                return Ok(result);
             }
             catch (Exception ex)
             {
                 // Log
                 Log.Error(ex.ExtToString());
-                
+
                 switch (ex.InnerException)
                 {
                     case Exception exception:
@@ -285,16 +288,17 @@ namespace WebApiRest.NetCore.Api.Controllers
                 user = await this._Bussiness.Update(user);
 
                 // Get role object of user updated
-                var roleModel = new RoleModel(); 
-                
+                var roleModel = new RoleModel();
+
                 // Check if user connected
                 if (this._Bussiness.IsUserConnected(id.Value))
                     roleModel = await this._BussinessRole.Read(user.IdRole ?? 0);
 
                 // Emit hub
                 await this._hubContext.Clients.All.SendAsync(
-                    HubClientMethods.UserUpdated.ToString(), 
-                    new UserRoleModel {
+                    HubClientMethods.UserUpdated.ToString(),
+                    new UserRoleModel
+                    {
                         Id = user.Id,
                         IdRole = user.Id,
                         Login = user.Login,
@@ -310,7 +314,7 @@ namespace WebApiRest.NetCore.Api.Controllers
             {
                 // Log
                 Log.Error(ex.ExtToString());
-                
+
                 switch (ex.InnerException)
                 {
                     case Exception exception:
@@ -339,7 +343,7 @@ namespace WebApiRest.NetCore.Api.Controllers
 
                 // Emit hub
                 await this._hubContext.Clients.All.SendAsync(
-                    HubClientMethods.UserDeleted.ToString(), 
+                    HubClientMethods.UserDeleted.ToString(),
                     id
                 );
 
@@ -349,7 +353,7 @@ namespace WebApiRest.NetCore.Api.Controllers
             {
                 // Log
                 Log.Error(ex.ExtToString());
-                
+
                 switch (ex.InnerException)
                 {
                     case Exception exception:
@@ -378,7 +382,7 @@ namespace WebApiRest.NetCore.Api.Controllers
 
                 // Emit hub
                 await this._hubContext.Clients.All.SendAsync(
-                    HubClientMethods.UsersDeleted.ToString(), 
+                    HubClientMethods.UsersDeleted.ToString(),
                     id
                 );
 
@@ -388,7 +392,7 @@ namespace WebApiRest.NetCore.Api.Controllers
             {
                 // Log
                 Log.Error(ex.ExtToString());
-                
+
                 switch (ex.InnerException)
                 {
                     case Exception exception:

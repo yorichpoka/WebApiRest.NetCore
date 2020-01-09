@@ -1,7 +1,7 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 using WebApiRest.NetCore.Domain.Models.Struct;
 
 namespace WebApiRest.NetCore.Domain
@@ -17,6 +17,7 @@ namespace WebApiRest.NetCore.Domain
                     Latitude = value.ElementAt(1)
                 };
         }
+
         public static CoordinateStruct ExtConvertToCoordinateStruct(this string value)
         {
             decimal longitude = 0, latitude = 0;
@@ -26,7 +27,7 @@ namespace WebApiRest.NetCore.Domain
                 decimal.TryParse(value.Split(',').ElementAt(0), out longitude);
                 decimal.TryParse(value.Split(',').ElementAt(1), out latitude);
             }
-            catch {  }
+            catch { }
 
             return
                 new CoordinateStruct()
