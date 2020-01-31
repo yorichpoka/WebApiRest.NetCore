@@ -16,13 +16,11 @@ namespace WebApiRest.NetCore.Api
         {
             value.Headers.Add("AppVersion", appVersion);
         }
-
         internal static string ExtToString(this HttpRequest value, Formatting formatting = Formatting.Indented)
         {
             return
                 JsonConvert.SerializeObject(
-                    new
-                    {
+                    new {
                         ContentLength = value.ContentLength,
                         ContentType = value.ContentType,
                         Cookies = value.Cookies,

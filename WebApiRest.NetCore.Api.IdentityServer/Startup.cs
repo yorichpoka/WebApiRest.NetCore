@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+
 using IdentityServer4;
 using IdentityServer4.Quickstart.UI;
 using Microsoft.AspNetCore.Builder;
@@ -29,8 +30,7 @@ namespace WebApiRest.NetCore.Api.IdentityServer
 
             // configures IIS out-of-proc settings (see https://github.com/aspnet/AspNetCore/issues/14882)
             services
-                .Configure<IISOptions>(iis =>
-                {
+                .Configure<IISOptions>(iis => {
                     iis.AuthenticationDisplayName = "Windows";
                     iis.AutomaticAuthentication = false;
                 }
@@ -38,20 +38,17 @@ namespace WebApiRest.NetCore.Api.IdentityServer
 
             // configures IIS in-proc settings
             services
-                .Configure<IISServerOptions>(iis =>
-                {
+                .Configure<IISServerOptions>(iis => {
                     iis.AuthenticationDisplayName = "Windows";
                     iis.AutomaticAuthentication = false;
                 }
             );
 
             #region Identity server 4 configuration
-
-            var builder =
+            var builder = 
                 services
                     .AddIdentityServer(
-                        options =>
-                        {
+                        options => {
                             options.Events.RaiseErrorEvents = true;
                             options.Events.RaiseInformationEvents = true;
                             options.Events.RaiseFailureEvents = true;
@@ -64,8 +61,7 @@ namespace WebApiRest.NetCore.Api.IdentityServer
             builder.AddInMemoryIdentityResources(Config.Ids);
             builder.AddInMemoryApiResources(Config.Apis);
             builder.AddInMemoryClients(Config.Clients);
-
-            #endregion Identity server 4 configuration
+            #endregion
 
             // or in-memory, json config
             //builder.AddInMemoryIdentityResources(Configuration.GetSection("IdentityResources"));

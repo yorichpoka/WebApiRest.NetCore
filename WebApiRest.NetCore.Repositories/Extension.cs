@@ -167,8 +167,7 @@ namespace WebApiRest.NetCore.Repositories
             if (obj.Grades != null)
                 value.Grades.ToList()
                             .ForEach(
-                                (grade) =>
-                                {
+                                (grade) => {
                                     var index = 0;
                                     grade.ExtUpdate(
                                         obj.Grades[(index++)]

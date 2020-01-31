@@ -1,16 +1,16 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApiRest.NetCore.Api.Filters;
-using WebApiRest.NetCore.Domain;
-using WebApiRest.NetCore.Domain.Hubs;
 using WebApiRest.NetCore.Domain.Interfaces.Bussiness;
 using WebApiRest.NetCore.Domain.Models;
+using WebApiRest.NetCore.Domain.Hubs;
+using Microsoft.AspNetCore.SignalR;
+using Serilog;
+using WebApiRest.NetCore.Domain;
 
 namespace WebApiRest.NetCore.Api.Controllers
 {
@@ -46,7 +46,7 @@ namespace WebApiRest.NetCore.Api.Controllers
             {
                 // Log
                 Log.Error(ex.ExtToString());
-
+                
                 switch (ex.InnerException)
                 {
                     case Exception exception:
@@ -75,7 +75,7 @@ namespace WebApiRest.NetCore.Api.Controllers
             {
                 // Log
                 Log.Error(ex.ExtToString());
-
+                
                 switch (ex.InnerException)
                 {
                     case Exception exception:
@@ -107,7 +107,7 @@ namespace WebApiRest.NetCore.Api.Controllers
             {
                 // Log
                 Log.Error(ex.ExtToString());
-
+                
                 switch (ex.InnerException)
                 {
                     case Exception exception:
@@ -148,7 +148,7 @@ namespace WebApiRest.NetCore.Api.Controllers
             {
                 // Log
                 Log.Error(ex.ExtToString());
-
+                
                 switch (ex.InnerException)
                 {
                     case Exception exception:
@@ -183,7 +183,7 @@ namespace WebApiRest.NetCore.Api.Controllers
             {
                 // Log
                 Log.Error(ex.ExtToString());
-
+                
                 switch (ex.InnerException)
                 {
                     case Exception exception:
@@ -219,7 +219,7 @@ namespace WebApiRest.NetCore.Api.Controllers
                    );
 
                 await this._Bussiness.Delete(ids.ToArray());
-
+                
                 // Emit hub
                 await this._hubContext.Clients.All.SendAsync("AuthorizationsDeleted", ids.Select(l => new { idRole = l[0], idMenu = l[1] }));
 
@@ -229,7 +229,7 @@ namespace WebApiRest.NetCore.Api.Controllers
             {
                 // Log
                 Log.Error(ex.ExtToString());
-
+                
                 switch (ex.InnerException)
                 {
                     case Exception exception:

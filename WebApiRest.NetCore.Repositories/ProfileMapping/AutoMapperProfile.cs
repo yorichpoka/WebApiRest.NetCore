@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using System;
 using System.Linq;
+using System;
 using WebApiRest.NetCore.Domain;
 using WebApiRest.NetCore.Domain.Models;
 using WebApiRest.NetCore.Domain.Models.MongoDB;
@@ -191,15 +191,15 @@ namespace WebApiRest.NetCore.Repositories.ProfileMapping
                 .ForMember(destination => destination.MetaDataModified, opts => opts.MapFrom(source => source.MetaDataModified.ExtConvertToDateTime()))
                 .ForMember(destination => destination.Location, opts => opts.MapFrom(source => source.Location.ExtConvertToCoordinateStruct()));
             CreateMap<WebSiteModel, WebSite>()
-                .ForMember(destination => destination.Created, opts => opts.MapFrom(source => (source.Created.HasValue ? source.Created.Value
+                .ForMember(destination => destination.Created, opts => opts.MapFrom(source => (source.Created.HasValue  ? source.Created.Value 
                                                                                                                         : DateTime.MinValue).ToString("s")))
-                .ForMember(destination => destination.LastModified, opts => opts.MapFrom(source => (source.LastModified.HasValue ? source.LastModified.Value
+                .ForMember(destination => destination.LastModified, opts => opts.MapFrom(source => (source.LastModified.HasValue    ? source.LastModified.Value 
                                                                                                                                     : DateTime.MinValue).ToString("s")))
-                .ForMember(destination => destination.MetaDataModified, opts => opts.MapFrom(source => (source.MetaDataModified.HasValue ? source.MetaDataModified.Value
+                .ForMember(destination => destination.MetaDataModified, opts => opts.MapFrom(source => (source.MetaDataModified.HasValue    ? source.MetaDataModified.Value 
                                                                                                                                             : DateTime.MinValue).ToString("s")))
                 .ForMember(destination => destination.Location, opts => opts.MapFrom(source => source.Location.ExtConvertToString()));
 
-            #endregion SqLite
+            #endregion
         }
     }
 }

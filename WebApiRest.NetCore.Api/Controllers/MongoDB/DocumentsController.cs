@@ -40,7 +40,7 @@ namespace WebApiRest.NetCore.Api.Controllers.MongoDB
             {
                 // Log
                 Log.Error(ex.ExtToString());
-
+                
                 switch (ex.InnerException)
                 {
                     case Exception exception:
@@ -72,7 +72,7 @@ namespace WebApiRest.NetCore.Api.Controllers.MongoDB
             {
                 // Log
                 Log.Error(ex.ExtToString());
-
+                
                 switch (ex.InnerException)
                 {
                     case Exception exception:
@@ -106,7 +106,7 @@ namespace WebApiRest.NetCore.Api.Controllers.MongoDB
             {
                 // Log
                 Log.Error(ex.ExtToString());
-
+                
                 switch (ex.InnerException)
                 {
                     case Exception exception:
@@ -135,7 +135,7 @@ namespace WebApiRest.NetCore.Api.Controllers.MongoDB
             {
                 // Log
                 Log.Error(ex.ExtToString());
-
+                
                 switch (ex.InnerException)
                 {
                     case Exception exception:

@@ -1,10 +1,13 @@
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace WebApiRest.NetCore.Service
 {
@@ -17,12 +20,10 @@ namespace WebApiRest.NetCore.Service
         /// TODO
         /// </summary>
         private readonly ILogger<MainWorker> _logger;
-
         /// <summary>
         /// TODO
         /// </summary>
         private readonly IConfiguration _Configuration;
-
         /// <summary>
         /// TODO
         /// </summary>
@@ -53,7 +54,7 @@ namespace WebApiRest.NetCore.Service
             this._HttpClient.BaseAddress = new Uri(baseAddressApi);
 
             // Execute base method
-            return base.StartAsync(cancellationToken);
+            return base.StartAsync(cancellationToken);  
         }
 
         /// <summary>
@@ -68,10 +69,9 @@ namespace WebApiRest.NetCore.Service
             var pathInputFolder = this._Configuration.GetSection("Settings:PathInputFolder").Value;
             var pathOutputFolder = this._Configuration.GetSection("Settings:PathOutputFolder").Value;
 
-            do
-            {
-                #region Case 1
+            do {
 
+                #region Case 1
                 /*
                 // Call api
                 var httpResponse = await this._HttpClient.GetAsync("/");
@@ -84,11 +84,9 @@ namespace WebApiRest.NetCore.Service
                 else
                     Log.Error(stringResponse);
                 */
-
-                #endregion Case 1
+                #endregion
 
                 #region Case 2 (Move)
-
                 // Move any content
                 foreach (var path in System.IO.Directory.GetFiles($"{pathInputFolder}\\Move"))
                 {
@@ -97,15 +95,14 @@ namespace WebApiRest.NetCore.Service
                     // Move file
                     System.IO.File.Move(path, $"{pathOutputFolder}\\Move\\{fileName}", true);
                 }
-
-                #endregion Case 2 (Move)
+                #endregion
 
                 // Log
                 this._logger.LogInformation("MainWorker running at: {0}", DateTime.Now);
 
                 // Waiting for next execution
                 await Task.Delay(executionDelay, cancellationToken);
-            }
+            } 
             while (!cancellationToken.IsCancellationRequested);
         }
 

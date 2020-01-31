@@ -7,17 +7,11 @@ namespace WebApiRest.NetCore.Domain.Interfaces.Repositories.MongoDB
     public interface IGradeRepository
     {
         Task<GradeModel> Create(GradeModel obj);
-
         Task<GradeModel> Read(string grade_id);
-
         Task<IEnumerable<GradeModel>> Read(int top);
-
         Task<IEnumerable<GradeModel>> Read();
-
         Task Update(GradeModel obj);
-
         Task Delete(string grade_id);
-
         Task Delete(string[] grade_ids);
     }
 }

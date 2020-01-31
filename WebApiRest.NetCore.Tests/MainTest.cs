@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Xml;
 using Xunit;
+using System.Xml;
 
 namespace WebApiRest.NetCore.Tests
 {
@@ -24,7 +24,7 @@ namespace WebApiRest.NetCore.Tests
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(xml);
 
-            foreach (XmlElement node in xmlDoc.ChildNodes[1].ChildNodes)
+            foreach(XmlElement node in xmlDoc.ChildNodes[1].ChildNodes)
             {
                 if (node.FirstChild.FirstChild.InnerText == message)
                 {
